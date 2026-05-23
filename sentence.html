@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>兒童語句網格樂園</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Fredoka+One&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        body {
+        font-family: 'DFKai-SB', 'BiauKai', '標楷體-繁', 'BiauKaiTC-Regular', '標楷體', 'Kaiti', 'Fredoka One', 'Noto Sans TC', sans-serif;
+
+            background: linear-gradient(135deg, #e0f2fe 0%, #fae8ff 50%, #fdf2f8 100%);
+            overflow-x: hidden;
+        }
+
+        .grid-cell {
+            transition: opacity 600ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 300ms ease,
+                background-color 300ms ease;
+        }
+
+        .clicked-card {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: none !important;
+            opacity: 0.25 !important;
+            filter: grayscale(80%);
+            pointer-events: none;
+        }
+
+        #settings-drawer {
+            transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .animate-scaleIn {
+            animation: scaleIn 250ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes gentle-float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(3deg);
+            }
+        }
+
+        @keyframes slow-drift {
+
+            0%,
+            100% {
+                transform: translateX(0px);
+            }
+
+            50% {
+                transform: translateX(30px);
+            }
+        }
+
+        @keyframes star-twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 0.9;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes rotate-slow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .anim-float {
+            animation: gentle-float 6s ease-in-out infinite;
+        }
+
+        .anim-drift {
+            animation: slow-drift 12s ease-in-out infinite;
+        }
+
+        .anim-twinkle {
+            animation: star-twinkle 3s ease-in-out infinite;
+        }
+
+        .anim-rotate {
+            animation: rotate-slow 20s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4 select-none relative overflow-y-auto">
+
+    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div
+            class="absolute top-[8%] left-[5%] w-24 h-24 bg-gradient-to-br from-amber-400 to-yellow-300 rounded-full opacity-60 filter blur-[1px] anim-rotate flex items-center justify-center">
+            <div class="w-16 h-16 bg-yellow-200 rounded-full border-4 border-dashed border-amber-500"></div>
+        </div>
+
+        <div class="absolute top-[12%] right-[8%] w-20 h-28 opacity-50 anim-float flex flex-col items-center">
+            <svg class="w-16 h-16 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M12 2a8 8 0 0 0-8 8c0 4.2 4.4 7.6 7 11.4.3.4.7.6 1 .6s.7-.2 1-.6c2.6-3.8 7-7.2 7-11.4a8 8 0 0 0-8-8z" />
+            </svg>
+            <div class="w-6 h-4 bg-amber-600 rounded-sm mt-1 border border-amber-700"></div>
+        </div>
+
+        <div
+            class="absolute top-[25%] left-[12%] bg-white/70 backdrop-blur-xs px-6 py-3 rounded-full shadow-xs opacity-60 anim-drift flex items-center gap-1.5">
+            <div class="w-4 h-4 bg-white rounded-full"></div>
+            <span class="text-xs font-bold text-sky-500/80">學習真快樂！</span>
+        </div>
+
+        <div class="absolute bottom-[20%] right-[10%] bg-white/70 backdrop-blur-xs px-6 py-3 rounded-full shadow-xs opacity-60 anim-drift flex items-center gap-1.5"
+            style="animation-delay: -3s;">
+            <div class="w-4 h-4 bg-white rounded-full"></div>
+            <span class="text-xs font-bold text-purple-500/80">加油！好棒！</span>
+        </div>
+
+        <svg class="absolute top-[40%] right-[15%] w-8 h-8 text-yellow-400 opacity-60 anim-twinkle" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+        </svg>
+        <svg class="absolute bottom-[35%] left-[8%] w-10 h-10 text-amber-400 opacity-50 anim-twinkle"
+            style="animation-delay: 1.5s;" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+        </svg>
+
+        <div class="absolute bottom-[10%] left-[5%] opacity-40 anim-float" style="animation-delay: -2s;">
+            <svg class="w-14 h-14 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+        </div>
+
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[650px] opacity-[0.12] rounded-full border-[60px] border-double border-gradient-to-r from-red-400 via-yellow-400 to-blue-400 filter blur-xs">
+        </div>
+    </div>
+
+    <div id="drag-overlay"
+        class="fixed inset-0 bg-indigo-500/90 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-4 transition-all duration-300 opacity-0 pointer-events-none text-white p-6">
+        <div
+            class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-white animate-bounce shadow-xl">
+            <i class="fa-solid fa-file-import text-3xl"></i>
+        </div>
+        <h3 class="text-xl font-black">放開滑鼠以匯入題庫 📄</h3>
+        <p class="text-sm opacity-80 max-w-sm text-center leading-relaxed">我們將自動分析各行關卡！字詞間可用空格或「|」分隔，並支援以「#」設定多種過關順序！
+        </p>
+    </div>
+
+    <div id="scaler-wrapper" class="relative flex items-center justify-center w-[80%] max-w-[850px] min-w-[320px] z-10">
+        <div id="main-container"
+            class="relative w-full min-h-[580px] bg-white/95 border-4 border-white shadow-[0_20px_50px_rgba(148,163,184,0.15)] rounded-[40px] p-5 sm:p-6 md:p-8 flex flex-col justify-between overflow-hidden backdrop-blur-xl">
+
+            <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-30"></canvas>
+
+            <div id="win-modal"
+                class="absolute inset-0 bg-slate-900/40 backdrop-blur-md flex flex-col items-center justify-center z-40 transition-all duration-500 opacity-0 pointer-events-none p-4">
+                <div class="relative max-w-sm w-full bg-white border-4 border-emerald-300 rounded-[35px] p-6 text-center shadow-2xl transform scale-90 transition-transform duration-500"
+                    id="win-modal-card">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-tr from-yellow-400 to-amber-300 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-yellow-500/20 animate-bounce">
+                        <i class="fa-solid fa-face-laugh-beam text-amber-800 text-3xl"></i>
+                    </div>
+                    <span
+                        class="px-3.5 py-1 text-xs font-black uppercase tracking-widest bg-emerald-100 text-emerald-700 rounded-full border-2 border-emerald-300">超級棒！拼湊成功！</span>
+
+                    <h2 class="text-xl font-black text-slate-800 mt-3 mb-2">哇！你完成這個句子了！</h2>
+
+                    <div id="win-statement-preview"
+                        class="bg-indigo-50/80 border-2 border-indigo-200 rounded-[24px] p-4 font-mono text-indigo-700 text-sm sm:text-base mb-6 break-all shadow-inner font-bold flex flex-wrap gap-2 justify-center">
+                    </div>
+
+                    <div class="flex gap-4 justify-center">
+                        <button id="btn-win-replay"
+                            class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-white font-black text-sm px-8 py-3.5 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> 挑戰下一題
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 flex flex-row items-center justify-between gap-3">
+                <div>
+                    <h1
+                        class="text-lg sm:text-xl md:text-2xl font-black bg-gradient-to-r from-indigo-600 via-pink-500 to-amber-500 bg-clip-text text-transparent flex items-center gap-2">
+                        <i class="fa-solid fa-palette text-pink-500 animate-bounce"></i>
+                        <span>語句樂園</span>
+                    </h1>
+                    <p class="text-slate-400 text-xs mt-0.5 font-bold">動動手指點字卡，把神奇句子拼出來吧！</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <!-- 環形倒數計時時鐘 -->
+                    <div
+                        class="flex items-center gap-2 bg-indigo-50/50 px-2.5 py-1.5 rounded-2xl border-2 border-indigo-100 shadow-inner">
+                        <div class="relative w-8 h-8 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="16" cy="16" r="13" stroke="rgba(226, 232, 240, 0.8)" stroke-width="2.5"
+                                    fill="transparent" />
+                                <circle id="clock-radial" cx="16" cy="16" r="13" stroke="#4f46e5" stroke-width="2.5"
+                                    fill="transparent" stroke-dasharray="81.68" stroke-dashoffset="0"
+                                    stroke-linecap="round" class="transition-all duration-100" />
+                                <line x1="16" y1="16" x2="16" y2="7" stroke="#4f46e5" stroke-width="1.5"
+                                    stroke-linecap="round" id="clock-hand"
+                                    style="transform-origin: 16px 16px; transition: transform 100ms linear;" />
+                            </svg>
+                            <span id="clock-digital"
+                                class="absolute text-[9px] font-black text-indigo-600 font-mono">10</span>
+                        </div>
+                        <div class="hidden sm:flex flex-col select-none">
+                            <span
+                                class="text-[8px] text-slate-400 font-bold uppercase tracking-wider leading-none">發呆時間</span>
+                            <span id="clock-status-text"
+                                class="text-[9px] text-slate-500 font-bold leading-tight mt-0.5">等待中</span>
+                        </div>
+                    </div>
+
+                    <!-- 進度標籤 -->
+                    <div
+                        class="bg-indigo-50/50 px-3 py-1.5 h-[40px] rounded-2xl border-2 border-indigo-100 flex items-center gap-1.5 shadow-inner">
+                        <span class="text-xs text-slate-600 font-black">挑戰進度: <span id="revealed-count"
+                                class="text-pink-500 font-black">0</span>/<span id="total-count"
+                                class="text-indigo-600 font-black">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative z-10 flex items-center justify-between gap-1.5 mt-3">
+                <div class="flex items-center gap-1.5">
+                    <button id="btn-sound"
+                        class="bg-indigo-50/60 hover:bg-indigo-100/80 border-2 border-indigo-100 text-indigo-500 hover:text-indigo-700 h-[44px] w-[44px] rounded-2xl transition-all flex items-center justify-center shadow-xs"
+                        title="聲音開關">
+                        <i id="sound-icon" class="fa-solid fa-volume-high text-emerald-600 animate-bounce"></i>
+                    </button>
+                    <button id="btn-toggle-settings"
+                        class="bg-indigo-50/60 hover:bg-indigo-100/80 border-2 border-indigo-100 text-indigo-500 hover:text-indigo-700 h-[44px] w-[44px] rounded-2xl transition-all flex items-center justify-center shadow-xs"
+                        title="換題目">
+                        <i class="fa-solid fa-sliders text-indigo-500 text-lg"></i>
+                    </button>
+                </div>
+
+                <button id="btn-replay"
+                    class="bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 active:scale-95 text-amber-950 h-[44px] px-5 sm:px-6 rounded-2xl text-xs sm:text-sm font-black transition-all shadow-md shadow-orange-500/10 flex items-center gap-1.5">
+                    <i class="fa-solid fa-rocket text-xs"></i> 換個新挑戰
+                </button>
+            </div>
+
+            <div class="relative z-10 mt-4 flex flex-col gap-1.5">
+                <label
+                    class="text-xs sm:text-sm font-black text-slate-500 flex justify-between items-center tracking-wide uppercase">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-puzzle-piece text-indigo-400"></i>
+                        你拼出來的神奇語句：</span>
+                    <div class="flex gap-1.5">
+                        <button id="btn-hint"
+                            class="text-emerald-700 hover:text-emerald-600 font-black text-xs sm:text-sm bg-emerald-100 hover:bg-emerald-200 px-4 py-1.5 rounded-xl border-2 border-emerald-200 transition-all shadow-xs">💡
+                            點我提示</button>
+                        <button id="btn-clear-one"
+                            class="text-orange-700 hover:text-orange-600 font-black text-xs sm:text-sm bg-orange-100 hover:bg-orange-200 px-4 py-1.5 rounded-xl border-2 border-orange-200 transition-all shadow-xs">回一步</button>
+                        <button id="btn-clear-all"
+                            class="text-rose-700 hover:text-rose-600 font-black text-xs sm:text-sm bg-rose-100 hover:bg-rose-200 px-4 py-1.5 rounded-xl border-2 border-rose-200 transition-all shadow-xs">重來</button>
+                    </div>
+                </label>
+
+                <div id="custom-words-display"
+                    class="w-full min-h-[110px] sm:min-h-[120px] max-h-[160px] bg-indigo-50/30 border-4 border-dashed border-indigo-100 rounded-[28px] p-4 flex flex-wrap content-start items-center gap-2.5 shadow-inner transition-all overflow-y-auto">
+                </div>
+            </div>
+
+            <div id="grid-container"
+                class="relative z-10 grid grid-cols-4 grid-rows-3 gap-2.5 sm:gap-3 md:gap-4 my-4 flex-grow min-h-[180px]">
+            </div>
+
+            <div id="settings-drawer"
+                class="absolute top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white border-l-4 border-indigo-100 shadow-2xl z-40 transform translate-x-full backdrop-blur-xl p-5 sm:p-6 overflow-y-auto rounded-l-[40px]">
+                <div class="flex flex-col h-full justify-between gap-4">
+                    <div>
+                        <div class="flex items-center justify-between border-b-2 border-slate-100 pb-3 mb-4">
+                            <h2 class="text-sm sm:text-base font-black text-slate-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-gear text-indigo-500 animate-spin"
+                                    style="animation-duration: 8s;"></i>
+                                <span>尋寶樂園關卡設定</span>
+                            </h2>
+                            <button id="btn-close-settings" class="text-slate-400 hover:text-slate-700"><i
+                                    class="fa-solid fa-circle-xmark text-xl"></i></button>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 mb-4">
+                            <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider">批量上傳 .txt
+                                題庫檔案</span>
+                            <div id="upload-dropzone"
+                                class="border-4 border-dashed border-indigo-100 hover:border-indigo-400 hover:bg-indigo-50/30 rounded-2xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group">
+                                <i
+                                    class="fa-solid fa-cloud-arrow-up text-indigo-300 group-hover:text-indigo-500 text-2xl transition-all"></i>
+                                <span
+                                    class="text-[10px] font-black text-slate-600 group-hover:text-indigo-600 transition-all">把
+                                    .txt 檔案拖到這裡</span>
+                                <span class="text-[8px] text-slate-400">支援「空格」或「|」隔開，多重正確答案請用「#」分隔</span>
+                                <input type="file" id="file-uploader" accept=".txt" class="hidden">
+                            </div>
+                            <div id="pool-status"
+                                class="text-[9px] text-indigo-600 font-bold bg-indigo-50/50 border border-indigo-100/50 rounded-xl px-2.5 py-1.5 flex justify-between items-center mt-1">
+                                <span>當前題庫規模：</span>
+                                <span id="pool-size-badge"
+                                    class="bg-indigo-600 text-white rounded-md px-1.5 py-0.5 text-[8px] font-black">7 題
+                                    (預設)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <span
+                                class="text-[10px] text-slate-400 uppercase font-black tracking-wider font-extrabold">設計這關的語句</span>
+                            <textarea id="target-phrase-input" rows="4"
+                                class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-3 py-2 text-xs text-indigo-600 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-100 resize-none"
+                                placeholder="範例：今天|天氣|非常好#天氣|今天|非常好"></textarea>
+                            <p class="text-[8px] text-slate-400 leading-normal">
+                                💡 <b>技巧：</b>您可以使用 <b>#</b> 設定多個都算對的句子！字與字之間用 <b>|</b> 或空格分開。例如：<br>
+                                <span class="text-indigo-500 font-semibold">多|吃|水果|身體|好#水果|多|吃|身體|好</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <button id="btn-save-settings"
+                        class="w-full py-3 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-400 hover:to-violet-400 text-white rounded-2xl text-xs font-black shadow-lg shadow-indigo-500/20 transition-all">挑戰這句！</button>
+                </div>
+            </div>
+
+            <!-- Toast 浮動提示訊息 -->
+            <div id="toast-msg"
+                class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-800/95 border border-slate-700 text-white px-4 py-2 rounded-xl text-[10px] sm:text-xs font-medium shadow-lg pointer-events-none opacity-0 transition-opacity duration-300 z-50 whitespace-nowrap">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 預設經典兒童啟蒙題庫 (部分已導入多重解答 `#` 規格)
+        let questionPool = [
+            "我|喜歡|學習|程式|設計#學習|程式|設計|我|喜歡",
+            "今天|天氣|非常|晴朗|適合|出遊#天氣|今天|非常|晴朗|適合|出遊",
+            "小|貓咪|在|沙發上|高興地|打滾#在|沙發上|小|貓咪|高興地|打滾",
+            "我們|一起|手拉手|去|公園|玩耍#手拉手|我們|一起|去|公園|玩耍",
+            "太陽|公公|一大早|露出|甜美|的|微笑",
+            "努力|學習|就像|給|夢想|插上|翅膀",
+            "多|吃|蔬菜|身體|才會|棒棒|健健康康#身體|多|吃|蔬菜|才會|棒棒|健健康康"
+        ];
+
+        let poolIsCustom = false;
+
+        // 繽紛、亮色卡片配色 (專為孩童設計)
+        const colorThemes = [
+            { bg: "bg-indigo-50/90", border: "border-indigo-300/80", text: "text-indigo-800", hover: "hover:bg-indigo-100 hover:border-indigo-400 hover:shadow-indigo-200/20" },
+            { bg: "bg-emerald-50/90", border: "border-emerald-300/80", text: "text-emerald-800", hover: "hover:bg-emerald-100 hover:border-emerald-400 hover:shadow-emerald-200/20" },
+            { bg: "bg-violet-50/90", border: "border-violet-300/80", text: "text-violet-800", hover: "hover:bg-violet-100 hover:border-violet-400 hover:shadow-violet-200/20" },
+            { bg: "bg-pink-50/90", border: "border-pink-300/80", text: "text-pink-800", hover: "hover:bg-pink-100 hover:border-pink-400 hover:shadow-pink-200/20" },
+            { bg: "bg-amber-50/90", border: "border-amber-300/80", text: "text-amber-800", hover: "hover:bg-amber-100 hover:border-amber-400 hover:shadow-amber-200/20" },
+            { bg: "bg-sky-50/90", border: "border-sky-300/80", text: "text-sky-800", hover: "hover:bg-sky-100 hover:border-sky-400 hover:shadow-sky-200/20" }
+        ];
+
+        // Do-Re-Mi C大調溫暖清脆音階
+        const SCALE_NOTES = [
+            "C5", "D5", "E5", "F5", "G5", "A5", "B5",
+            "C6", "D6", "E6", "F6", "G6"
+        ];
+
+        let currentInputPhrase = "";
+        let parsedAlternatives = []; // 二維陣列，儲存所有此關卡的拆解語法組合，例如：[ ["我","喜歡"], ["喜歡","我"] ]
+        let cellsData = [];          // 網格中的 12 宮格卡片詳細資料
+        let baseWords = [];          // 要放入網格的獨特字彙集 (最多 12 個)
+        let statement = [];          // 小朋友目前點選拼湊出來的句子陣列
+        let clickHistory = [];       // 點選卡片索引歷史，用於撤銷
+
+        let synth = null, reverb = null, inactivityTimer = null, inactivityStartTime = null;
+        const INACTIVITY_LIMIT = 10000; // 10秒自動撤銷
+        let CONFIG = { soundEnabled: true };
+
+        function parseTargetPhrase(pipeString) {
+            currentInputPhrase = pipeString || questionPool[Math.floor(Math.random() * questionPool.length)];
+
+            // 1. 以「#」切分出多組正確答案路徑
+            let rawAlts = currentInputPhrase.split('#');
+            parsedAlternatives = rawAlts.map(alt => {
+                if (alt.includes('|')) {
+                    return alt.split('|').map(w => w.trim()).filter(w => w !== "");
+                } else {
+                    return alt.split(/\s+/).map(w => w.trim()).filter(w => w !== "");
+                }
+            }).filter(arr => arr.length > 0);
+
+            // 2. 智慧提取所有替代方案中的不重複字彙放入網格，最長 12 個字
+            // 以第一條主路徑字彙為核心，確保至少有一組答案能完全拼出
+            let uniqueWords = [...parsedAlternatives[0]];
+            for (let i = 1; i < parsedAlternatives.length; i++) {
+                for (let word of parsedAlternatives[i]) {
+                    if (uniqueWords.length >= 12) break;
+                    if (!uniqueWords.includes(word)) {
+                        uniqueWords.push(word);
+                    }
+                }
+                if (uniqueWords.length >= 12) break;
+            }
+
+            // 3. 補齊 12 宮格中不足的空格
+            baseWords = Array.from({ length: 12 }, (_, i) => (i < uniqueWords.length) ? uniqueWords[i] : "");
+
+            document.getElementById('target-phrase-input').value = currentInputPhrase;
+            updatePoolStatusBadge();
+        }
+
+        function updatePoolStatusBadge() {
+            const badge = document.getElementById('pool-size-badge');
+            if (badge) {
+                badge.textContent = `${questionPool.length} 題 (${poolIsCustom ? '自訂' : '預設'})`;
+                badge.className = poolIsCustom
+                    ? "bg-emerald-500 text-white rounded-md px-1.5 py-0.5 text-[8px] font-black"
+                    : "bg-indigo-600 text-white rounded-md px-1.5 py-0.5 text-[8px] font-black";
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-msg');
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2500);
+        }
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityStartTime = Date.now();
+            inactivityTimer = setTimeout(() => {
+                if (statement.length > 0) {
+                    performUndo();
+                    showToast("你發呆囉！魔法時針發功，幫你撤銷上一張卡片 🚀");
+                }
+                resetInactivityTimer();
+            }, INACTIVITY_LIMIT);
+        }
+
+        function updateInactivityBar() {
+            const radial = document.getElementById('clock-radial');
+            const hand = document.getElementById('clock-hand');
+            const digital = document.getElementById('clock-digital');
+            const statusText = document.getElementById('clock-status-text');
+
+            if (statement.length === 0) {
+                if (radial) {
+                    radial.style.strokeDashoffset = "0";
+                    radial.style.stroke = "#4f46e5";
+                }
+                if (hand) {
+                    hand.style.transform = "rotate(360deg)";
+                    hand.style.stroke = "#4f46e5";
+                }
+                if (digital) {
+                    digital.textContent = "10";
+                    digital.className = "absolute text-[9px] font-black text-indigo-600 font-mono";
+                }
+                if (statusText) {
+                    statusText.textContent = "等待中";
+                    statusText.className = "text-[9px] text-slate-400 font-bold leading-none mt-0.5";
+                }
+            } else if (inactivityStartTime) {
+                const elapsed = Date.now() - inactivityStartTime;
+                const percent = Math.max(0, 100 - (elapsed / INACTIVITY_LIMIT) * 100);
+                const offset = (1 - (percent / 100)) * 81.68;
+
+                if (radial) radial.style.strokeDashoffset = offset;
+                if (hand) {
+                    const deg = (percent / 100) * 360;
+                    hand.style.transform = `rotate(${deg}deg)`;
+                }
+
+                const secondsLeft = Math.max(0, Math.ceil((INACTIVITY_LIMIT - elapsed) / 1000));
+
+                if (secondsLeft <= 3) {
+                    if (digital) {
+                        digital.textContent = secondsLeft;
+                        digital.className = "absolute text-[9px] font-black text-rose-600 font-mono animate-pulse";
+                    }
+                    if (radial) radial.style.stroke = "#e11d48";
+                    if (hand) hand.style.stroke = "#e11d48";
+                    if (statusText) {
+                        statusText.textContent = "即將撤銷！";
+                        statusText.className = "text-[9px] text-rose-500 font-bold leading-none mt-0.5 animate-pulse";
+                    }
+                } else {
+                    if (digital) {
+                        digital.textContent = secondsLeft;
+                        digital.className = "absolute text-[9px] font-black text-amber-600 font-mono";
+                    }
+                    if (radial) radial.style.stroke = "#d97706";
+                    if (hand) hand.style.stroke = "#d97706";
+                    if (statusText) {
+                        statusText.textContent = "計時中";
+                        statusText.className = "text-[9px] text-amber-600 font-semibold leading-none mt-0.5";
+                    }
+                }
+            }
+            requestAnimationFrame(updateInactivityBar);
+        }
+        updateInactivityBar();
+
+        async function initAudio() {
+            if (!synth) {
+                try {
+                    await Tone.start();
+                    reverb = new Tone.JCReverb(0.4).toDestination();
+                    synth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "triangle" },
+                        envelope: {
+                            attack: 0.01,
+                            decay: 0.15,
+                            sustain: 0.2,
+                            release: 0.2
+                        }
+                    }).connect(reverb);
+                    synth.volume.value = -4;
+                } catch (e) {
+                    console.warn("音效引擎載入失敗：", e);
+                }
+            }
+            if (Tone.context && Tone.context.state !== 'running') {
+                await Tone.context.resume();
+            }
+        }
+
+        async function triggerUserGestureAudio() {
+            if (CONFIG.soundEnabled) {
+                await initAudio();
+            }
+        }
+
+        function updateWordsDisplay() {
+            const container = document.getElementById('custom-words-display');
+            container.innerHTML = '';
+
+            if (statement.length === 0) {
+                container.innerHTML = `
+                    <span class="text-sm sm:text-base md:text-lg text-indigo-400/80 font-black flex items-center gap-2 pl-2 select-none animate-pulse">
+                        <i class="fa-solid fa-wand-magic-sparkles text-pink-400 text-lg sm:text-xl md:text-2xl"></i> 
+                        點下方卡片拼出你的句子寶藏！
+                    </span>
+                `;
+                return;
+            }
+
+            clickHistory.forEach((cellIndex, listIndex) => {
+                const cellObj = cellsData[cellIndex];
+                if (!cellObj) return;
+
+                const theme = cellObj.theme;
+                const pill = document.createElement('div');
+                pill.className = `animate-scaleIn px-4 py-2 sm:py-2.5 rounded-2xl border-2 ${theme.border} ${theme.bg} ${theme.text} font-black text-sm sm:text-base md:text-lg shadow-md flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all`;
+
+                pill.innerHTML = `
+                    <span>${cellObj.word}</span>
+                    <i class="fa-solid fa-circle-xmark opacity-60 hover:opacity-100 text-xs sm:text-sm transition-all" title="撤銷到這一步"></i>
+                `;
+
+                pill.onclick = async (e) => {
+                    e.stopPropagation();
+                    await triggerUserGestureAudio();
+                    const targetPos = clickHistory.indexOf(cellIndex);
+                    if (targetPos !== -1) {
+                        while (clickHistory.length > targetPos) {
+                            performUndo();
+                        }
+                    }
+                };
+
+                container.appendChild(pill);
+            });
+        }
+
+        function performUndo() {
+            if (clickHistory.length > 0) {
+                const lastIdx = clickHistory.pop();
+                statement.pop();
+
+                const cellObj = cellsData[lastIdx];
+                if (cellObj) {
+                    cellObj.isClicked = false;
+                    cellObj.element.classList.remove('clicked-card');
+                }
+
+                if (CONFIG.soundEnabled && synth) {
+                    const pitchIndex = Math.max(0, statement.length);
+                    const note = SCALE_NOTES[pitchIndex % SCALE_NOTES.length];
+                    synth.triggerAttackRelease(note, "16n", undefined, 0.3);
+                }
+            }
+            updateWordsDisplay();
+            resetInactivityTimer();
+            updateCounts();
+        }
+
+        function buildGridDOM() {
+            const grid = document.getElementById('grid-container');
+            grid.innerHTML = '';
+            cellsData = [];
+            statement = [];
+            clickHistory = [];
+            updateWordsDisplay();
+
+            const shuffledWords = [...baseWords].sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < 12; i++) {
+                const div = document.createElement('div');
+
+                if (shuffledWords[i] === "") {
+                    div.className = "grid-cell rounded-[24px] bg-slate-50/20 border-2 border-dashed border-slate-100 opacity-0 scale-75";
+                    cellsData.push({ element: div, index: i, word: "", isRevealed: true, isClicked: true, theme: null });
+                } else {
+                    const theme = colorThemes[Math.floor(Math.random() * colorThemes.length)];
+                    div.className = `grid-cell rounded-[24px] border-4 ${theme.border} ${theme.bg} ${theme.hover} opacity-0 scale-75 cursor-pointer flex items-center justify-center backdrop-blur-md p-1 shadow-sm`;
+
+                    div.innerHTML = `<div class="font-black text-sm sm:text-base md:text-lg lg:text-xl text-center ${theme.text} opacity-0 transition-opacity duration-300 select-none">${shuffledWords[i]}</div>`;
+
+                    div.onclick = async () => {
+                        await triggerUserGestureAudio();
+                        const obj = cellsData[i];
+                        if (!obj.isClicked) {
+                            obj.isClicked = true;
+                            clickHistory.push(i);
+                            statement.push(shuffledWords[i]);
+                            updateWordsDisplay();
+                            div.classList.add('clicked-card');
+
+                            if (CONFIG.soundEnabled && synth) {
+                                const pitchIndex = (statement.length - 1) % SCALE_NOTES.length;
+                                const note = SCALE_NOTES[pitchIndex];
+                                synth.triggerAttackRelease(note, "16n");
+                            }
+
+                            resetInactivityTimer();
+                            updateCounts();
+                            checkWin();
+                        }
+                    };
+
+                    cellsData.push({ element: div, index: i, word: shuffledWords[i], isRevealed: true, isClicked: false, theme: theme });
+
+                    setTimeout(() => {
+                        div.style.opacity = "1";
+                        div.style.transform = "scale(1)";
+                        const wordDiv = div.querySelector('div');
+                        if (wordDiv) wordDiv.style.opacity = "1";
+                    }, i * 35);
+                }
+                grid.appendChild(div);
+            }
+            updateCounts();
+        }
+
+        function updateCounts() {
+            // 自動適配目前拼法最可能的正確路徑字數
+            let targetTotal = parsedAlternatives[0].length;
+            if (statement.length > 0) {
+                let possibleAlts = parsedAlternatives.filter(alt => {
+                    for (let i = 0; i < statement.length; i++) {
+                        if (statement[i] !== alt[i]) return false;
+                    }
+                    return true;
+                });
+                if (possibleAlts.length > 0) {
+                    targetTotal = possibleAlts[0].length;
+                }
+            }
+
+            document.getElementById('revealed-count').textContent = statement.length;
+            document.getElementById('total-count').textContent = targetTotal;
+        }
+
+        // 判斷兩陣列內容是否完全一致
+        function isCorrectSentence(arr1, arr2) {
+            if (arr1.length !== arr2.length) return false;
+            for (let i = 0; i < arr1.length; i++) {
+                if (arr1[i] !== arr2[i]) return false;
+            }
+            return true;
+        }
+
+        function checkWin() {
+            // 檢查玩家目前的拼法是否符合其中任何一個正確語句組合
+            let matchedAlt = parsedAlternatives.find(alt => isCorrectSentence(statement, alt));
+
+            if (matchedAlt) {
+                const winModal = document.getElementById('win-modal');
+                const winPreview = document.getElementById('win-statement-preview');
+
+                winModal.style.opacity = '1';
+                winModal.style.pointerEvents = 'auto';
+
+                winPreview.innerHTML = '';
+                // 將拼出的那組正確卡片氣泡展示於通關畫面
+                clickHistory.forEach(cellIndex => {
+                    const cellObj = cellsData[cellIndex];
+                    if (cellObj) {
+                        const theme = cellObj.theme;
+                        const block = document.createElement('span');
+                        block.className = `px-3.5 py-2 rounded-2xl border-2 ${theme.border} ${theme.bg} ${theme.text} text-xs sm:text-sm font-black shadow-sm`;
+                        block.textContent = cellObj.word;
+                        winPreview.appendChild(block);
+                    }
+                });
+
+                if (CONFIG.soundEnabled && synth) {
+                    synth.releaseAll();
+                    const now = Tone.now() + 0.05;
+                    synth.triggerAttackRelease("C5", "8n", now);
+                    synth.triggerAttackRelease("E5", "8n", now + 0.15);
+                    synth.triggerAttackRelease("G5", "8n", now + 0.3);
+                    synth.triggerAttackRelease("C6", "4n", now + 0.45);
+                }
+            }
+        }
+
+        document.getElementById('btn-hint').onclick = async () => {
+            await triggerUserGestureAudio();
+
+            // 尋找符合目前進度的可能過關路徑
+            let possibleAlts = parsedAlternatives.filter(alt => {
+                if (alt.length <= statement.length) return false;
+                for (let i = 0; i < statement.length; i++) {
+                    if (statement[i] !== alt[i]) return false;
+                }
+                return true;
+            });
+
+            // 如果目前拼法已完全脫離所有可能的正確路徑，提示玩家撤回
+            if (possibleAlts.length === 0) {
+                showToast("喔哦！拼法偏離了所有的正確組合，請按「回一步」修正順序喔！");
+                const undoBtn = document.getElementById('btn-clear-one');
+                undoBtn.classList.add('ring-4', 'ring-amber-400', 'scale-105');
+                setTimeout(() => undoBtn.classList.remove('ring-4', 'ring-amber-400', 'scale-105'), 1500);
+                return;
+            }
+
+            // 選取第一條可行的過關路徑，並高亮提示其下一個目標字詞
+            const targetAlt = possibleAlts[0];
+            const nextWord = targetAlt[statement.length];
+            const targetCell = cellsData.find(c => !c.isClicked && c.word === nextWord);
+
+            if (targetCell) {
+                showToast(`提示小精靈：下一個字可以選「${nextWord}」喔！`);
+                targetCell.element.classList.add('ring-4', 'ring-emerald-400', 'scale-105', 'z-20', 'animate-pulse');
+
+                if (CONFIG.soundEnabled && synth) {
+                    const now = Tone.now();
+                    synth.triggerAttackRelease("G5", "16n", now, 0.4);
+                    synth.triggerAttackRelease("C6", "16n", now + 0.1, 0.4);
+                }
+
+                setTimeout(() => {
+                    targetCell.element.classList.remove('ring-4', 'ring-emerald-400', 'scale-105', 'z-20', 'animate-pulse');
+                }, 1500);
+            }
+        };
+
+        // 聲音開關控制
+        document.getElementById('btn-sound').onclick = async () => {
+            CONFIG.soundEnabled = !CONFIG.soundEnabled;
+            if (CONFIG.soundEnabled) {
+                await initAudio();
+                const now = Tone.now();
+                synth.triggerAttackRelease("C5", "16n", now);
+                synth.triggerAttackRelease("E5", "16n", now + 0.1);
+            }
+            document.getElementById('sound-icon').className = CONFIG.soundEnabled
+                ? "fa-solid fa-volume-high text-emerald-600 animate-bounce"
+                : "fa-solid fa-volume-xmark text-rose-500";
+        };
+
+        // 點擊「換新挑戰」
+        document.getElementById('btn-replay').onclick = async () => {
+            await triggerUserGestureAudio();
+            parseTargetPhrase();
+            buildGridDOM();
+            resetInactivityTimer();
+            document.getElementById('win-modal').style.opacity = '0';
+            document.getElementById('win-modal').style.pointerEvents = 'none';
+        };
+
+        // 設定面板展開/收起
+        document.getElementById('btn-toggle-settings').onclick = async () => {
+            await triggerUserGestureAudio();
+            document.getElementById('settings-drawer').style.transform = 'translateX(0)';
+        };
+        document.getElementById('btn-close-settings').onclick = () => {
+            document.getElementById('settings-drawer').style.transform = 'translateX(100%)';
+        };
+
+        // 套用設定面板的新關卡句子
+        document.getElementById('btn-save-settings').onclick = async () => {
+            await triggerUserGestureAudio();
+            const val = document.getElementById('target-phrase-input').value;
+            if (val.trim()) {
+                parseTargetPhrase(val);
+                buildGridDOM();
+                resetInactivityTimer();
+                document.getElementById('settings-drawer').style.transform = 'translateX(100%)';
+                showToast("耶！新挑戰已經出發囉！");
+            } else {
+                showToast("語句不可以是空白的喔！");
+            }
+        };
+
+        document.getElementById('btn-clear-one').onclick = async () => {
+            await triggerUserGestureAudio();
+            performUndo();
+        };
+        document.getElementById('btn-clear-all').onclick = async () => {
+            await triggerUserGestureAudio();
+            while (clickHistory.length > 0) {
+                performUndo();
+            }
+        };
+
+        document.getElementById('btn-win-replay').onclick = document.getElementById('btn-replay').onclick;
+
+        function handleFileImport(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const text = e.target.result;
+                const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+
+                if (lines.length === 0) {
+                    showToast("錯誤：這個檔案沒有句子可以玩喔！");
+                    return;
+                }
+
+                // 處理可能的多重關卡與空格智能拆解
+                const cleanPool = lines.map(line => {
+                    // 針對每行中的各個 `#` 子方案進行解析
+                    let subParts = line.split('#').map(part => {
+                        part = part.trim();
+                        if (!part.includes('|') && /\s+/.test(part)) {
+                            return part.replace(/\s+/g, '|');
+                        }
+                        return part;
+                    });
+                    return subParts.join('#');
+                });
+
+                questionPool = cleanPool;
+                poolIsCustom = true;
+
+                parseTargetPhrase(questionPool[0]);
+                buildGridDOM();
+                resetInactivityTimer();
+
+                showToast(`🎉 成功匯入尋寶題庫！共計 ${questionPool.length} 個精彩關卡。`);
+                document.getElementById('settings-drawer').style.transform = 'translateX(100%)';
+            };
+
+            reader.readAsText(file);
+        }
+
+        const dropzone = document.getElementById('upload-dropzone');
+        const fileUploader = document.getElementById('file-uploader');
+
+        dropzone.onclick = () => fileUploader.click();
+        fileUploader.onchange = (e) => {
+            if (e.target.files.length > 0) {
+                handleFileImport(e.target.files[0]);
+            }
+        };
+
+        dropzone.ondragover = (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-indigo-400', 'bg-indigo-50/50');
+        };
+        dropzone.ondragleave = (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-indigo-400', 'bg-indigo-50/50');
+        };
+        dropzone.ondrop = (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-indigo-400', 'bg-indigo-50/50');
+            if (e.dataTransfer.files.length > 0) {
+                handleFileImport(e.dataTransfer.files[0]);
+            }
+        };
+
+        // 全網頁拖曳覆蓋層
+        const dragOverlay = document.getElementById('drag-overlay');
+
+        window.ondragenter = (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.types.includes('Files')) {
+                dragOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                dragOverlay.classList.add('opacity-100');
+            }
+        };
+
+        dragOverlay.ondragover = (e) => e.preventDefault();
+
+        dragOverlay.ondragleave = (e) => {
+            e.preventDefault();
+            dragOverlay.classList.remove('opacity-100');
+            dragOverlay.classList.add('opacity-0', 'pointer-events-none');
+        };
+
+        dragOverlay.ondrop = (e) => {
+            e.preventDefault();
+            dragOverlay.classList.remove('opacity-100');
+            dragOverlay.classList.add('opacity-0', 'pointer-events-none');
+
+            if (e.dataTransfer.files.length > 0) {
+                handleFileImport(e.dataTransfer.files[0]);
+            }
+        };
+
+        // 綁定點擊即激活音效 (突破瀏覽器防自動播放限制)
+        window.addEventListener('click', triggerUserGestureAudio, { once: false });
+
+        window.onload = () => {
+            parseTargetPhrase();
+            buildGridDOM();
+            resetInactivityTimer();
+        };
+    </script>
+</body>
+
+</html>
