@@ -14,7 +14,7 @@
 
     <style>
         body {
-        font-family: 'DFKai-SB', 'BiauKai', '標楷體-繁', 'BiauKaiTC-Regular', '標楷體', 'Kaiti', 'Fredoka One', 'Noto Sans TC', sans-serif;
+            font-family: 'DFKai-SB', 'BiauKai', '標楷體-繁', 'BiauKaiTC-Regular', '標楷體', 'Kaiti', 'Fredoka One', 'Noto Sans TC', sans-serif;
 
             background: linear-gradient(135deg, #e0f2fe 0%, #fae8ff 50%, #fdf2f8 100%);
             overflow-x: hidden;
@@ -323,8 +323,12 @@
                             <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider">批量上傳 .txt
                                 題庫檔案</span>
 
-                                      <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider">
-                                <a href="https://github.com/hofai2k/page/blob/main/questionpool.txt" class="text-indigo-500 hover:text-indigo-700" download>題庫檔案格式.txt</a>
+                            <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider">
+                                <a id="downloadLink" href="#" class="text-indigo-500 hover:text-indigo-700"
+                                    download>題庫檔案格式 sample file</a>
+
+
+
                             </span>
                             <div id="upload-dropzone"
                                 class="border-4 border-dashed border-indigo-100 hover:border-indigo-400 hover:bg-indigo-50/30 rounded-2xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group">
@@ -410,6 +414,44 @@
         let synth = null, reverb = null, inactivityTimer = null, inactivityStartTime = null;
         const INACTIVITY_LIMIT = 10000; // 10秒自動撤銷
         let CONFIG = { soundEnabled: true };
+
+
+        document.getElementById('downloadLink').addEventListener('click', function (event) {
+            const data = `我|喜歡|學習|程式|設計
+1|2|3#1|3|2#3|2|1
+小明|愛吃|橙|和|香蕉#小明|愛吃|香蕉|和|橙
+`;
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            // Update the link's href to the blob URL
+            this.href = url;
+            this.download = 'questionpool.txt';
+
+            // The link will now behave normally and trigger the download
+        });
+
+
+        function downloadTextFile(content, fileName) {
+            // 1. Create the Blob
+            const blob = new Blob([content], { type: 'text/plain' });
+
+            // 2. Create the Object URL
+            const url = URL.createObjectURL(blob);
+
+            // 3. Create a temporary anchor element
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName; // The name the file will have when downloaded
+
+            // 4. Trigger the download
+            document.body.appendChild(a);
+            a.click();
+
+            // 5. Cleanup
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
         function parseTargetPhrase(pipeString) {
             currentInputPhrase = pipeString || questionPool[Math.floor(Math.random() * questionPool.length)];
