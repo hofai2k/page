@@ -219,7 +219,7 @@
                         <i class="fa-solid fa-palette text-pink-500 animate-bounce"></i>
                         <span>語句樂園</span>
                     </h1>
-                    <p class="text-slate-400 text-xs mt-0.5 font-bold">動動手指點字卡，把神奇句子拼出來吧！</p>
+                    <p class="text-slate-400 text-xs mt-0.5 font-bold">動動手指點字卡，把神奇句子拼出來吧！ <span class="text-indigo-400 ml-1 opacity-80"><i class="fa-solid fa-ear-listen"></i> 長按聽發音</span></p>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -672,6 +672,20 @@
             updateCounts();
         }
 
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+                showToast(`🔊 正在朗讀：「${text}」`);
+            } else {
+                showToast("您的瀏覽器不支援語音朗讀功能喔！");
+            }
+        }
+
         function buildGridDOM() {
             const grid = document.getElementById('grid-container');
             grid.innerHTML = '';
@@ -694,27 +708,52 @@
 
                     div.innerHTML = `<div class="font-black text-sm sm:text-base md:text-lg lg:text-xl text-center ${theme.text} opacity-0 transition-opacity duration-300 select-none">${shuffledWords[i]}</div>`;
 
-                    div.onclick = async () => {
-                        await triggerUserGestureAudio();
+                    let pressTimer;
+                    let isLongPress = false;
+
+                    const cancelPointer = () => clearTimeout(pressTimer);
+
+                    div.addEventListener('pointerdown', (e) => {
                         const obj = cellsData[i];
-                        if (!obj.isClicked) {
-                            obj.isClicked = true;
-                            clickHistory.push(i);
-                            statement.push(shuffledWords[i]);
-                            updateWordsDisplay();
-                            div.classList.add('clicked-card');
+                        if (obj.isClicked) return;
+                        isLongPress = false;
+                        pressTimer = setTimeout(() => {
+                            isLongPress = true;
+                            speakWord(shuffledWords[i]);
+                            div.classList.add('ring-4', 'ring-sky-400', 'scale-110', 'z-20');
+                            setTimeout(() => div.classList.remove('ring-4', 'ring-sky-400', 'scale-110', 'z-20'), 600);
+                        }, 600); // 600ms triggers long press
+                    });
 
-                            if (CONFIG.soundEnabled && synth && typeof Tone !== 'undefined') {
-                                const pitchIndex = (statement.length - 1) % SCALE_NOTES.length;
-                                const note = SCALE_NOTES[pitchIndex];
-                                synth.triggerAttackRelease(note, "16n");
-                            }
+                    div.addEventListener('pointerleave', cancelPointer);
+                    div.addEventListener('pointercancel', cancelPointer);
+                    div.addEventListener('touchmove', cancelPointer, {passive: true});
 
-                            resetInactivityTimer();
-                            updateCounts();
-                            checkWin();
+                    div.addEventListener('pointerup', async (e) => {
+                        cancelPointer();
+                        const obj = cellsData[i];
+                        
+                        if (obj.isClicked) return;
+                        if (isLongPress) return; // Prevent selecting the card if it was just a long press read aloud
+                        
+                        await triggerUserGestureAudio();
+                        
+                        obj.isClicked = true;
+                        clickHistory.push(i);
+                        statement.push(shuffledWords[i]);
+                        updateWordsDisplay();
+                        div.classList.add('clicked-card');
+
+                        if (CONFIG.soundEnabled && synth && typeof Tone !== 'undefined') {
+                            const pitchIndex = (statement.length - 1) % SCALE_NOTES.length;
+                            const note = SCALE_NOTES[pitchIndex];
+                            synth.triggerAttackRelease(note, "16n");
                         }
-                    };
+
+                        resetInactivityTimer();
+                        updateCounts();
+                        checkWin();
+                    });
 
                     cellsData.push({ element: div, index: i, word: shuffledWords[i], isRevealed: true, isClicked: false, theme: theme });
 
