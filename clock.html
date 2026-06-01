@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Colorful Clock</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        .clock-container {
+            background: white;
+            padding: 35px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        svg {
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        /* Interactive Hand Styles */
+        .hand {
+            cursor: grab;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .hand:active {
+            cursor: grabbing;
+        }
+
+        /* Subtle glowing effect on hover */
+        .minute-hand:hover { stroke: #00b894; }
+        .hour-hand:hover { stroke: #ff7675; }
+
+        .time-display {
+            margin-top: 25px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3436;
+            background: #f1f2f6;
+            padding: 12px 28px;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .instructions {
+            color: #636e72;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        /* Styling for the clock numbers */
+        .clock-number {
+            font-size: 20px;
+            font-weight: bold;
+            fill: #2d3436;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="clock-container">
+    <div class="instructions">Drag either colored hand to adjust the time</div>
+    
+    <svg width="340" height="340" viewBox="0 0 300 300" id="clock">
+        <circle cx="150" cy="150" r="140" stroke="#6c5ce7" stroke-width="8" fill="none" />
+        <circle cx="150" cy="150" r="136" stroke="#a29bfe" stroke-width="2" fill="none" />
+        
+        <circle cx="150" cy="150" r="145" fill="none" pointer-events="all" /> 
+        
+        <g id="numbers-group"></g>
+
+        <line id="hour-hand" class="hand hour-hand" x1="150" y1="150" x2="150" y2="90" stroke="#ff7675" stroke-width="9" stroke-linecap="round" />
+        
+        <line id="minute-hand" class="hand minute-hand" x1="150" y1="150" x2="150" y2="55" stroke="#00b894" stroke-width="6" stroke-linecap="round" />
+        
+        <circle cx="150" cy="150" r="9" fill="#2d3436" />
+        <circle cx="150" cy="150" r="4" fill="#ffffff" />
+    </svg>
+
+    <div class="time-display" id="digital-time">12:00</div>
+</div>
+
+<script>
+    const svg = document.getElementById('clock');
+    const hourHand = document.getElementById('hour-hand');
+    const minuteHand = document.getElementById('minute-hand');
+    const timeDisplay = document.getElementById('digital-time');
+    const numbersGroup = document.getElementById('numbers-group');
+
+    let activeHand = null;
+    let hourAngle = 0;
+    let minuteAngle = 0;
+
+    // --- Generate Clock Numbers (1 to 12) ---
+    const radius = 110; // Distance of numbers from center
+    for (let i = 1; i <= 12; i++) {
+        // Calculate angle for each number (30 degrees apart, offset by -90 to start at 12 o'clock)
+        const angleRad = ((i * 30) - 90) * Math.PI / 180;
+        const x = 150 + radius * Math.cos(angleRad);
+        const y = 150 + radius * Math.sin(angleRad);
+
+        const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textEl.setAttribute("x", x);
+        textEl.setAttribute("y", y);
+        textEl.setAttribute("class", "clock-number");
+        textEl.textContent = i;
+        numbersGroup.appendChild(textEl);
+    }
+
+    // --- Interaction Physics ---
+    function getAngle(clientX, clientY) {
+        const rect = svg.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        let angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI) + 90;
+        if (angle < 0) angle += 360;
+        return angle;
+    }
+
+    function handleStart(e) {
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const targetAngle = getAngle(clientX, clientY);
+
+        const distToHour = Math.min(Math.abs(targetAngle - hourAngle), 360 - Math.abs(targetAngle - hourAngle));
+        const distToMinute = Math.min(Math.abs(targetAngle - minuteAngle), 360 - Math.abs(targetAngle - minuteAngle));
+
+        activeHand = (distToHour < distToMinute) ? 'hour' : 'minute';
+        handleMove(e);
+    }
+
+    function handleMove(e) {
+        if (!activeHand) return;
+        e.preventDefault();
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let angle = getAngle(clientX, clientY);
+
+        if (activeHand === 'minute') {
+            minuteAngle = Math.round(angle / 6) * 6; // Snap to minutes
+            minuteHand.setAttribute('transform', `rotate(${minuteAngle} 150 150)`);
+        } else if (activeHand === 'hour') {
+            hourAngle = Math.round(angle); // Continuous rotation for hours
+            hourHand.setAttribute('transform', `rotate(${hourAngle} 150 150)`);
+        }
+
+        updateDigitalDisplay();
+    }
+
+    function handleEnd() {
+        activeHand = null;
+    }
+
+    function updateDigitalDisplay() {
+        let minutes = Math.round(minuteAngle / 6) % 60;
+        let hours = Math.floor(hourAngle / 30) % 12;
+        if (hours === 0) hours = 12;
+
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        const formattedHours = hours.toString().padStart(2, '0');
+
+        timeDisplay.textContent = `${formattedHours}:${formattedMinutes}`;
+    }
+
+    // Event Bindings
+    svg.addEventListener('mousedown', handleStart);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+
+    svg.addEventListener('touchstart', handleStart, { passive: false });
+    window.addEventListener('touchmove', handleMove, { passive: false });
+    window.addEventListener('touchend', handleEnd);
+</script>
+
+</body>
+</html>
