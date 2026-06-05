@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Colorful Clock</title>
+    <title>Interactive Voice Clock</title>
     <style>
         body {
             display: flex;
@@ -40,7 +40,6 @@
             cursor: grabbing;
         }
 
-        /* Subtle glowing effect on hover */
         .minute-hand:hover { stroke: #00b894; }
         .hour-hand:hover { stroke: #ff7675; }
 
@@ -63,7 +62,6 @@
             margin-bottom: 20px;
         }
 
-        /* Styling for the clock numbers */
         .clock-number {
             font-size: 20px;
             font-weight: bold;
@@ -72,6 +70,48 @@
             dominant-baseline: middle;
             user-select: none;
         }
+
+        /* Voice Button Styles */
+        .voice-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .voice-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        }
+
+        .voice-btn:hover {
+            background: #5a4bcf;
+            transform: translateY(-2px);
+        }
+
+        .voice-btn:active {
+            transform: translateY(0);
+        }
+
+        .voice-btn.en {
+            background: #0984e3;
+            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3);
+        }
+
+        .voice-btn.en:hover {
+            background: #0773c5;
+        }
     </style>
 </head>
 <body>
@@ -79,23 +119,40 @@
 <div class="clock-container">
     <div class="instructions">Drag either colored hand to adjust the time</div>
     
+    <!-- Clock SVG -->
     <svg width="340" height="340" viewBox="0 0 300 300" id="clock">
+        <!-- Outer Border Ring -->
         <circle cx="150" cy="150" r="140" stroke="#6c5ce7" stroke-width="8" fill="none" />
+        <!-- Inner Ring -->
         <circle cx="150" cy="150" r="136" stroke="#a29bfe" stroke-width="2" fill="none" />
         
+        <!-- Invisible capture zone for easy calculations -->
         <circle cx="150" cy="150" r="145" fill="none" pointer-events="all" /> 
         
+        <!-- Numbers 1-12 dynamically generated via JavaScript -->
         <g id="numbers-group"></g>
 
+        <!-- Hour Hand -->
         <line id="hour-hand" class="hand hour-hand" x1="150" y1="150" x2="150" y2="90" stroke="#ff7675" stroke-width="9" stroke-linecap="round" />
         
+        <!-- Minute Hand -->
         <line id="minute-hand" class="hand minute-hand" x1="150" y1="150" x2="150" y2="55" stroke="#00b894" stroke-width="6" stroke-linecap="round" />
         
+        <!-- Center Pin Cap -->
         <circle cx="150" cy="150" r="9" fill="#2d3436" />
         <circle cx="150" cy="150" r="4" fill="#ffffff" />
     </svg>
 
+    <br>
+
+    <!-- Digital Display -->
     <div class="time-display" id="digital-time">12:00</div>
+
+    <!-- Voice Controls -->
+    <div class="voice-controls">
+        <button class="voice-btn" onclick="speakTime('zh-HK')">🔊 廣東話</button>
+        <button class="voice-btn en" onclick="speakTime('en-US')">🔊 English</button>
+    </div>
 </div>
 
 <script>
@@ -110,9 +167,8 @@
     let minuteAngle = 0;
 
     // --- Generate Clock Numbers (1 to 12) ---
-    const radius = 110; // Distance of numbers from center
+    const radius = 110; 
     for (let i = 1; i <= 12; i++) {
-        // Calculate angle for each number (30 degrees apart, offset by -90 to start at 12 o'clock)
         const angleRad = ((i * 30) - 90) * Math.PI / 180;
         const x = 150 + radius * Math.cos(angleRad);
         const y = 150 + radius * Math.sin(angleRad);
@@ -180,6 +236,41 @@
         const formattedHours = hours.toString().padStart(2, '0');
 
         timeDisplay.textContent = `${formattedHours}:${formattedMinutes}`;
+    }
+
+    // --- Voice Function (Web Speech API) ---
+    function speakTime(language) {
+        // Stop any currently playing voice
+        window.speechSynthesis.cancel();
+
+        let minutes = Math.round(minuteAngle / 6) % 60;
+        let hours = Math.floor(hourAngle / 30) % 12;
+        if (hours === 0) hours = 12;
+
+        let utterance = new SpeechSynthesisUtterance();
+        utterance.lang = language;
+        let textToSpeak = "";
+
+        if (language === 'zh-HK') {
+            if (minutes === 0) {
+                textToSpeak = `現在是${hours}時正`;
+            } else if (minutes < 10) {
+                textToSpeak = `現在是${hours}時零${minutes}分`;
+            } else {
+                textToSpeak = `現在是${hours}時${minutes}分`;
+            }
+        } else if (language === 'en-US') {
+            if (minutes === 0) {
+                textToSpeak = `It's now ${hours} o'clock.`;
+            } else if (minutes < 10) {
+                textToSpeak = `It's now ${hours} oh ${minutes}.`;
+            } else {
+                textToSpeak = `It's now ${hours} ${minutes}.`;
+            }
+        }
+
+        utterance.text = textToSpeak;
+        window.speechSynthesis.speak(utterance);
     }
 
     // Event Bindings

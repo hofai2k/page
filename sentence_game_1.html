@@ -201,7 +201,7 @@
         async function loadGameLevels() {
             const urlParams = new URLSearchParams(window.location.search);
             // Default to 'set1.txt' if the '?file=' parameter is not specified
-            const targetFile = urlParams.get('file') || 'set1.txt';
+            const targetFile = `sentence_game_1/${urlParams.get('file')}` || 'sentence_game_1/set1.txt';
 
             try {
                 const response = await fetch(targetFile);
