@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>句子遊戲 (雙人對戰) - 含回顧功能 & 8-Bit BGM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        :root {
+            --bg-image: url('Gemini_Generated_Image_2g1m8a2g1m8a2g1m.png');
+        }
+
+        body {
+            font-family: 'DFKai-SB', 'BiauKai', '標楷體-繁', 'BiauKaiTC-Regular', '標楷體', 'Kaiti', 'Fredoka One', 'Noto Sans TC', sans-serif;
+            background-image: var(--bg-image);
+            background-color: #5c8f24; /* Retro green fallback */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 15px;
+        }
+
+        .arcade-border {
+            border: 8px solid #4a3525;
+            box-shadow: 0 10px 0 #2d2016;
+        }
+
+        .grid-border {
+            border: 6px solid #4a3525;
+        }
+
+        .panel-border {
+            border: 4px solid #4a3525;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .preview-panel {
+            transition: all 0.3s ease;
+        }
+        
+        .retro-glow {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body class="p-2 sm:p-4">
+
+    <div class="game-container w-full max-w-[1400px] bg-[#fffaf0]/85 backdrop-blur-md arcade-border rounded-3xl relative flex flex-col md:flex-row p-4 sm:p-6 md:p-8 gap-6 md:gap-8 min-h-[640px]">
+
+        <div class="absolute -top-6 left-1/2 -translate-x-1/2 md:left-12 md:translate-x-0 bg-[#ff7875] border-4 border-[#4a3525] px-8 py-2 rounded-2xl shadow-[0_5px_0_#4a3525] z-30">
+            <span class="text-white font-black text-2xl sm:text-3xl tracking-wider text-center block">造句大師</span>
+        </div>
+
+        <div id="player-1-section" class="preview-panel flex-1 flex flex-col justify-between items-center pt-12 pb-4 relative min-h-[280px] md:h-auto border-b-4 border-dashed border-[#ecd5c3] md:border-b-0 md:border-r-4">
+            <div class="relative w-48 h-48 bg-black border-4 border-[#4a3525] rounded-full overflow-hidden flex flex-col items-center justify-center shadow-xl group">
+                <video id="camera-stream" autoplay playsinline class="w-full h-full object-cover"></video>
+                <canvas id="photo-canvas" class="hidden"></canvas>
+                <img id="photo-preview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Captured avatar" />
+                <button onclick="retakePhoto(1)" id="retake-btn" class="absolute bottom-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded hidden hover:bg-black">重拍</button>
+            </div>
+            <div class="char-tag bg-[#ff4d4f] border-3 border-[#4a3525] text-white text-center py-2 px-8 rounded-2xl shadow-[0_4px_0_#4a3525] mt-4 mb-4">
+                <span id="char-name" class="font-black text-xl">玩家 1</span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="takePhoto(1)" id="capture-btn" class="bg-gradient-to-r from-emerald-500 to-teal-500 border-3 border-[#4a3525] text-white py-2 px-5 rounded-full font-black shadow-[0_3px_0_#4a3525] active:translate-y-1 active:shadow-none transition-all">
+                    📸 拍照 (初始化音效)
+                </button>
+            </div>
+        </div>
+
+        <div id="main-section" class="menu-section flex-[1.6] bg-black/5 backdrop-blur-sm panel-border rounded-2xl p-4 flex flex-col relative overflow-hidden">
+
+            <div id="waiting-overlay" class="absolute inset-0 bg-black/90 z-20 flex flex-col items-center justify-center p-4 text-center">
+                <h2 class="text-white text-2xl md:text-3xl font-black mb-4 tracking-wide">等待雙方拍照以開始遊戲</h2>
+                <p class="text-yellow-400 text-sm font-bold mb-6">💡 拍照時將同時啟動對應玩家的 8-bit BGM 音樂！</p>
+                <div class="flex gap-4">
+                    <span id="p1-status" class="bg-red-500 border-2 border-white/50 text-white px-4 py-2 rounded-xl font-black shadow-lg">玩家 1: 未準備</span>
+                    <span id="p2-status" class="bg-orange-500 border-2 border-white/50 text-white px-4 py-2 rounded-xl font-black shadow-lg">玩家 2: 未準備</span>
+                </div>
+            </div>
+
+            <div id="category-title" class="text-[#4a3525] text-xl font-black mb-2 flex justify-between items-center">
+                <span>正在載入關卡...</span>
+                <span id="turn-indicator" class="text-red-600 bg-red-100 px-3 py-1 rounded-lg text-sm border-2 border-red-300 hidden">換玩家 1 挑戰</span>
+            </div>
+            
+            <div class="grid-panel flex-1 bg-[#73d13d] grid-border rounded-xl p-3 grid grid-cols-3 gap-3 overflow-y-auto no-scrollbar">
+            </div>
+            
+            <div class="info-banner bg-black/80 border-2 border-white/20 rounded-xl p-3 text-white mt-3 flex flex-col items-center min-h-[80px]">
+                <div class="text-[#73d13d] font-black text-sm mb-1">你的句子：</div>
+                <div id="answer-zone" class="flex flex-wrap gap-2 justify-center items-center p-2"></div>
+            </div>
+            
+            <div class="flex justify-between mt-3 gap-2">
+                <button onclick="giveHint()" class="bg-gradient-to-r from-purple-500 to-indigo-500 border-3 border-[#4a3525] text-white py-2 px-4 rounded-xl font-black shadow-[0_3px_0_#4a3525] active:translate-y-1 active:shadow-none transition-transform">提示</button>
+                <button onclick="resetAnswer()" class="bg-[#4a3525] text-white py-2 px-4 rounded-xl font-black shadow-[0_3px_0_#21150e] active:translate-y-1 active:shadow-none transition-transform">重新排列</button>
+                <button onclick="checkAnswer()" class="flex-1 bg-yellow-400 text-[#4a3525] border-3 border-[#4a3525] rounded-xl font-black shadow-[0_4px_0_#4a3525] active:translate-y-1 active:shadow-none transition-all">送出答案</button>
+            </div>
+        </div>
+
+        <div id="player-2-section" class="preview-panel flex-1 flex flex-col justify-between items-center pt-12 pb-4 relative min-h-[280px] md:h-auto border-t-4 border-dashed border-[#ecd5c3] md:border-t-0 md:border-l-4">
+            <div class="relative w-48 h-48 bg-black border-4 border-[#4a3525] rounded-full overflow-hidden flex flex-col items-center justify-center shadow-xl group">
+                <video id="camera-stream-2" autoplay playsinline class="w-full h-full object-cover"></video>
+                <canvas id="photo-canvas-2" class="hidden"></canvas>
+                <img id="photo-preview-2" class="absolute inset-0 w-full h-full object-cover hidden" alt="Captured avatar" />
+                <button onclick="retakePhoto(2)" id="retake-btn-2" class="absolute bottom-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded hidden hover:bg-black">重拍</button>
+            </div>
+            <div class="char-tag bg-[#ffb969] border-3 border-[#4a3525] text-white text-center py-2 px-8 rounded-2xl shadow-[0_4px_0_#4a3525] mt-4 mb-4">
+                <span id="char-name-2" class="font-black text-xl">玩家 2</span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="takePhoto(2)" id="capture-btn-2" class="bg-gradient-to-r from-amber-500 to-orange-500 border-3 border-[#4a3525] text-white py-2 px-5 rounded-full font-black shadow-[0_3px_0_#4a3525] active:translate-y-1 active:shadow-none transition-all">
+                    📸 拍照 (初始化音效)
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="game-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#fffaf0] border-8 border-[#4a3525] rounded-3xl p-6 max-w-md w-full text-center relative shadow-[0_10px_0_#2d2016] overflow-hidden flex flex-col items-center justify-center min-h-[240px]">
+            <div class="relative z-10 flex flex-col items-center gap-4 w-full">
+                <div class="bg-[#ff7875] border-4 border-[#4a3525] px-6 py-1 rounded-xl shadow-[0_4px_0_#4a3525]">
+                    <span class="text-white font-black text-lg tracking-wider">提示訊息</span>
+                </div>
+                <p id="modal-message" class="text-[#4a3525] text-xl font-black my-2 leading-relaxed px-2"></p>
+                <button onclick="closeModal()" class="bg-yellow-400 text-[#4a3525] border-3 border-[#4a3525] rounded-xl font-black py-2 px-8 shadow-[0_4px_0_#4a3525] hover:bg-yellow-300 active:translate-y-0.5 active:shadow-[0_2px_0_#4a3525] transition-all">
+                    確定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let levels = [];
+        let currentLevelIndex = 0;
+        let availableWords = [];
+        let selectedWords = [];
+
+        // Game Turn State Control
+        let p1Ready = false;
+        let p2Ready = false;
+        let gameStarted = false;
+        let currentPlayer = 1;
+        
+        let matchHistory = []; 
+        let modalActiveCallback = null;
+
+        // Parse levels safely supporting single or multiple target structures
+        function parseToLevels(text) {
+            const blocks = text.split(/---+/);
+            const loadedLevels = [];
+
+            for (const block of blocks) {
+                const trimmedBlock = block.trim();
+                if (!trimmedBlock) continue;
+
+                const levelObj = { targets: [] };
+                const lines = trimmedBlock.split('\n');
+
+                for (let line of lines) {
+                    line = line.trim();
+                    if (!line) continue;
+
+                    const colonIndex = line.indexOf(':');
+                    if (colonIndex === -1) continue;
+
+                    const key = line.substring(0, colonIndex).trim();
+                    let value = line.substring(colonIndex + 1).trim();
+
+                    if (key === 'title') {
+                        levelObj.title = value.replace(/"$/, '');
+                    } else if (key === 'words') {
+                        levelObj.words = value.split('|').sort(() => Math.random() - 0.5);
+                    } else if (key === 'target') {
+                        levelObj.targets.push(value); 
+                    }
+                }
+
+                if (Object.keys(levelObj).length > 1) {
+                    loadedLevels.push(levelObj);
+                }
+            }
+            return loadedLevels;
+        }
+
+        // --- NEW: Load External File with URL Parameter Logic ---
+        async function loadGameLevels() {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Default to 'set1.txt' if the '?file=' parameter is not specified
+            const targetFile = urlParams.get('file') || 'set1.txt';
+
+            try {
+                const response = await fetch(targetFile);
+                if (!response.ok) {
+                    throw new Error(`無法載入檔案: ${response.statusText}`);
+                }
+                const textData = await response.text();
+                levels = parseToLevels(textData);
+                
+                if (levels.length > 0) {
+                    initLevel(0);
+                } else {
+                    document.getElementById('category-title').firstElementChild.textContent = "錯誤：沒找到有效關卡資料";
+                }
+            } catch (error) {
+                console.error("載入設定檔時發生錯誤:", error);
+                // If customized URL file fails, attempt a hard rescue fallback back to set1.txt
+                if (targetFile !== 'set1.txt') {
+                    console.log("正在嘗試復原載入預設 set1.txt...");
+                    try {
+                        const rescueResponse = await fetch('set1.txt');
+                        const rescueText = await rescueResponse.text();
+                        levels = parseToLevels(rescueText);
+                        if (levels.length > 0) initLevel(0);
+                        return;
+                    } catch(e) { /* silent crash handle */ }
+                }
+                document.getElementById('category-title').firstElementChild.textContent = "讀取關卡失敗，請檢查文字檔是否存在。";
+            }
+        }
+
+        // --- Tone.js Mario-Style Audio Engine ---
+        const AudioManager = {
+            initialized: false,
+            bgmSynth: null,
+            sfxSynth: null,
+            currentBgmSequence: null,
+            activeTrack: null,
+
+            async init() {
+                if (this.initialized) return;
+                await Tone.start();
+
+                // 8-bit square synthesizer for retro sounds
+                this.bgmSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "square" },
+                    envelope: { attack: 0.02, decay: 0.1, sustain: 0.2, release: 0.1 }
+                }).toDestination();
+                this.bgmSynth.volume.value = -14; // Low background BGM level
+
+                // Crisp arcade synthesizer for SFX
+                this.sfxSynth = new Tone.Synth({
+                    oscillator: { type: "square" },
+                    envelope: { attack: 0.01, decay: 0.08, sustain: 0, release: 0.08 }
+                }).toDestination();
+                this.sfxSynth.volume.value = -6; // Prominent SFX level
+
+                Tone.Transport.bpm.value = 160;
+                this.initialized = true;
+            },
+
+            playTrack(trackName) {
+                if (!this.initialized) return;
+                if (this.activeTrack === trackName) return; // Already running this track
+
+                this.stopBGM();
+                this.activeTrack = trackName;
+
+                let melodyNotes = [];
+                
+                if (trackName === 'p1') {
+                    // Upbeat Overworld Mario theme sequence in C-Major
+                    Tone.Transport.bpm.value = 180;
+                    melodyNotes = [
+                        "E5", "E5", null, "E5", null, "C5", "E5", null, 
+                        "G5", null, null, null, "G4", null, null, null,
+                        "C5", null, null, "G4", null, null, "E4", null, 
+                        null, "A4", null, "B4", null, "Bb4", "A4", null
+                    ];
+                } else if (trackName === 'p2') {
+                    // Mysterious, slower Underground-style chromatic walk
+                    Tone.Transport.bpm.value = 140;
+                    melodyNotes = [
+                        "C4", "C5", "A3", "A4", "Bb3", "Bb4", null, null,
+                        "F3", "F4", "D3", "D4", "Eb3", "Eb4", null, null,
+                        "C4", "C5", "A3", "A4", "Bb3", "Bb4", null, null,
+                        "G3", "G4", "E3", "E4", "F3", "F4", null, null
+                    ];
+                } else if (trackName === 'summary') {
+                    // Triumphant climbing Mario Victory / Level-Clear fanfare sequence
+                    Tone.Transport.bpm.value = 160;
+                    melodyNotes = [
+                        "G4", "C5", "E5", "G5", "C6", "E6", "G6", null,
+                        "E6", "G6", null, "A4", "D5", "F#5", "A5", "D6", 
+                        "F#6", "A6", null, "F#6", "A6", null, "B4", "E5",
+                        "G#5", "B5", "E6", "G#6", "B6", null, "G#6", "B6"
+                    ];
+                }
+
+                this.currentBgmSequence = new Tone.Sequence((time, note) => {
+                    if (note) {
+                        this.bgmSynth.triggerAttackRelease(note, "16n", time);
+                    }
+                }, melodyNotes, "16n");
+
+                this.currentBgmSequence.loop = true;
+                this.currentBgmSequence.start(0);
+
+                if (Tone.Transport.state !== "started") {
+                    Tone.Transport.start();
+                }
+            },
+
+            stopBGM() {
+                if (this.currentBgmSequence) {
+                    this.currentBgmSequence.stop();
+                    this.currentBgmSequence.dispose();
+                    this.currentBgmSequence = null;
+                }
+                this.activeTrack = null;
+            },
+
+            playClick() {
+                if (!this.initialized) return;
+                this.sfxSynth.triggerAttackRelease("E6", "32n");
+            },
+
+            playCorrect() {
+                if (!this.initialized) return;
+                const now = Tone.now();
+                // Upward powerup/coin chime
+                this.sfxSynth.triggerAttackRelease("C5", "16n", now);
+                this.sfxSynth.triggerAttackRelease("E5", "16n", now + 0.08);
+                this.sfxSynth.triggerAttackRelease("G5", "16n", now + 0.16);
+                this.sfxSynth.triggerAttackRelease("C6", "8n", now + 0.24);
+            },
+
+            playWrong() {
+                if (!this.initialized) return;
+                const now = Tone.now();
+                // Downward retro slide buzzer
+                this.sfxSynth.triggerAttackRelease("B3", "8n", now);
+                this.sfxSynth.triggerAttackRelease("F3", "4n", now + 0.12);
+            }
+        };
+
+        // Camera Handling & User Registration
+        const getCamElements = (id) => ({
+            video: document.getElementById(id === 1 ? 'camera-stream' : 'camera-stream-2'),
+            canvas: document.getElementById(id === 1 ? 'photo-canvas' : 'photo-canvas-2'),
+            preview: document.getElementById(id === 1 ? 'photo-preview' : 'photo-preview-2'),
+            captureBtn: document.getElementById(id === 1 ? 'capture-btn' : 'capture-btn-2'),
+            retakeBtn: document.getElementById(id === 1 ? 'retake-btn' : 'retake-btn-2')
+        });
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 400, height: 400, facingMode: "user" },
+                    audio: false
+                });
+                getCamElements(1).video.srcObject = stream;
+                getCamElements(2).video.srcObject = stream;
+            } catch (err) {
+                console.error("相機存取失敗 / Camera denied: ", err);
+            }
+        }
+
+        async function takePhoto(camId) {
+            await AudioManager.init();
+            AudioManager.playClick();
+
+            const cam = getCamElements(camId);
+            cam.canvas.width = cam.video.videoWidth || 400;
+            cam.canvas.height = cam.video.videoHeight || 400;
+
+            const context = cam.canvas.getContext('2d');
+            context.drawImage(cam.video, 0, 0, cam.canvas.width, cam.canvas.height);
+
+            cam.preview.src = cam.canvas.toDataURL('image/png');
+            cam.preview.classList.remove('hidden');
+            cam.retakeBtn.classList.remove('hidden');
+            cam.captureBtn.innerHTML = "🔄 重拍";
+
+            if (camId === 1) {
+                p1Ready = true;
+                const status = document.getElementById('p1-status');
+                status.textContent = "玩家 1: OK!";
+                status.classList.replace('bg-red-500', 'bg-green-500');
+            } else {
+                p2Ready = true;
+                const status = document.getElementById('p2-status');
+                status.textContent = "玩家 2: OK!";
+                status.classList.replace('bg-orange-500', 'bg-green-500');
+            }
+            checkGameStart();
+        }
+
+        function retakePhoto(camId) {
+            AudioManager.playClick();
+            const cam = getCamElements(camId);
+            cam.preview.classList.add('hidden');
+            cam.retakeBtn.classList.add('hidden');
+            cam.captureBtn.innerHTML = "📸 拍照";
+
+            if (!gameStarted) {
+                if (camId === 1) {
+                    p1Ready = false;
+                    const status = document.getElementById('p1-status');
+                    status.textContent = "玩家 1: 未準備";
+                    status.classList.replace('bg-green-500', 'bg-red-500');
+                } else {
+                    p2Ready = false;
+                    const status = document.getElementById('p2-status');
+                    status.textContent = "玩家 2: 未準備";
+                    status.classList.replace('bg-green-500', 'bg-orange-500');
+                }
+            }
+        }
+
+        function checkGameStart() {
+            if (p1Ready && p2Ready && !gameStarted) {
+                setTimeout(() => {
+                    gameStarted = true;
+                    document.getElementById('waiting-overlay').classList.add('hidden');
+                    document.getElementById('turn-indicator').classList.remove('hidden');
+                    switchTurn(1);
+                }, 800);
+            }
+        }
+
+        // Managing Active Player Turn Transitions
+        function switchTurn(playerNum) {
+            currentPlayer = playerNum;
+            const p1Section = document.getElementById('player-1-section');
+            const p2Section = document.getElementById('player-2-section');
+            const turnIndicator = document.getElementById('turn-indicator');
+
+            if (playerNum === 1) {
+                p1Section.style.display = 'flex';
+                p2Section.style.display = 'none';
+                turnIndicator.textContent = '換玩家 1 挑戰';
+                turnIndicator.className = "text-red-600 bg-red-100 px-3 py-1 rounded-lg text-sm border-2 border-red-300 font-black";
+                AudioManager.playTrack('p1');
+            } else {
+                p1Section.style.display = 'none';
+                p2Section.style.display = 'flex';
+                turnIndicator.textContent = '換玩家 2 挑戰';
+                turnIndicator.className = "text-orange-600 bg-orange-100 px-3 py-1 rounded-lg text-sm border-2 border-orange-300 font-black";
+                AudioManager.playTrack('p2');
+            }
+        }
+
+        // Custom Dialog Feedback Modal
+        function showModal(message, callback = null) {
+            if (AudioManager.bgmSynth) {
+                AudioManager.bgmSynth.volume.value = -24; 
+            }
+            document.getElementById('modal-message').textContent = message;
+            modalActiveCallback = callback;
+            document.getElementById('game-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            AudioManager.playClick();
+            document.getElementById('game-modal').classList.add('hidden');
+            
+            if (AudioManager.bgmSynth) {
+                AudioManager.bgmSynth.volume.value = -14; 
+            }
+
+            if (modalActiveCallback) {
+                const executeCallback = modalActiveCallback;
+                modalActiveCallback = null;
+                executeCallback();
+            }
+        }
+
+        // Game Mechanics Core Logic
+        function initLevel(index) {
+            if (!levels || levels.length === 0) return;
+            currentLevelIndex = index;
+            availableWords = [...levels[index].words].sort(() => Math.random() - 0.5);
+            selectedWords = [];
+            document.getElementById('category-title').firstElementChild.textContent = levels[index].title;
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.querySelector('.grid-panel');
+            grid.innerHTML = '';
+            availableWords.forEach((word, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white border-4 border-[#73d13d] rounded-xl h-[60px] flex items-center justify-center font-black cursor-pointer shadow-sm hover:-translate-y-1 hover:shadow-[0_4px_0_#4a3525] active:translate-y-0 active:shadow-none transition-all";
+                card.textContent = word;
+                card.onclick = () => {
+                    AudioManager.playClick();
+                    selectedWords.push(availableWords.splice(idx, 1)[0]);
+                    renderGrid();
+                };
+                grid.appendChild(card);
+            });
+            const zone = document.getElementById('answer-zone');
+            zone.innerHTML = '';
+            selectedWords.forEach((word, idx) => {
+                const badge = document.createElement('div');
+                badge.className = "bg-yellow-300 border-2 border-[#4a3525] px-4 py-2 rounded-lg cursor-pointer font-black shadow-sm hover:-translate-y-1 transition-transform";
+                badge.textContent = word;
+                badge.onclick = () => {
+                    AudioManager.playClick();
+                    availableWords.push(selectedWords.splice(idx, 1)[0]);
+                    renderGrid();
+                };
+                zone.appendChild(badge);
+            });
+        }
+
+        function resetAnswer() {
+            if (!gameStarted) return;
+            AudioManager.playClick();
+            availableWords = availableWords.concat(selectedWords);
+            selectedWords = [];
+            renderGrid();
+        }
+
+        function giveHint() {
+            if (!gameStarted) return;
+            AudioManager.playClick();
+            showModal("提示：第一個字是 " + levels[currentLevelIndex].targets[0].split(" ")[0]);
+        }
+
+        function checkAnswer() {
+            if (!gameStarted) return;
+
+            const userAnswer = selectedWords.join(" ");
+
+            if (levels[currentLevelIndex].targets.includes(userAnswer)) {
+                AudioManager.playCorrect();
+                
+                if (currentPlayer === 1) {
+                    matchHistory[currentLevelIndex] = { title: levels[currentLevelIndex].title, p1: userAnswer };
+                    showModal("🎉 玩家 1 答對了！換玩家 2 挑戰！", () => {
+                        switchTurn(2);
+                        initLevel(currentLevelIndex);
+                    });
+                } else {
+                    matchHistory[currentLevelIndex].p2 = userAnswer;
+                    if (currentLevelIndex < levels.length - 1) {
+                        showModal("🎉 玩家 2 也答對了！進入下一關，換回玩家 1！", () => {
+                            switchTurn(1);
+                            initLevel(currentLevelIndex + 1);
+                        });
+                    } else {
+                        showModal("🏆 恭喜！雙方都完成了所有關卡！", () => {
+                            showReviewPage();
+                        });
+                    }
+                }
+            } else {
+                AudioManager.playWrong();
+                showModal("❌ 錯誤，請再試試看！");
+            }
+        }
+
+        // Displaying Game Summary & Final Review
+        function showReviewPage() {
+            AudioManager.playTrack('summary');
+            const container = document.querySelector('.game-container');
+            
+            let reviewHtml = `<div class="w-full h-full bg-[#fffaf0]/95 backdrop-blur-md rounded-2xl p-6 md:p-8 flex flex-col z-40 absolute inset-0 overflow-y-auto border-4 border-[#4a3525] shadow-2xl">
+                <h1 class="text-3xl font-black text-center mb-6 text-[#4a3525] retro-glow">📜 遊戲回顧 (與終局音樂伴奏)</h1>`;
+
+            matchHistory.forEach((match, i) => {
+                const validAnswers = levels[i].targets.join(" / ");
+                reviewHtml += `
+                <div class="mb-4 p-4 border-2 border-dashed border-[#4a3525] rounded-xl bg-white shadow-sm">
+                    <h2 class="text-xl font-black text-[#4a3525] mb-2">${match.title}</h2>
+                    <p class="text-sm text-gray-600 mb-3 font-bold">✅ 允許的答案: <span class="text-green-600">${validAnswers}</span></p>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1 bg-red-100 p-3 rounded-lg border-2 border-red-300">
+                            <span class="font-black text-red-600 block mb-1">玩家 1 答案:</span>
+                            <span class="font-bold text-gray-800">${match.p1}</span>
+                        </div>
+                        <div class="flex-1 bg-orange-100 p-3 rounded-lg border-2 border-orange-300">
+                            <span class="font-black text-orange-600 block mb-1">玩家 2 答案:</span>
+                            <span class="font-bold text-gray-800">${match.p2}</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            reviewHtml += `<button onclick="location.reload()" class="mt-6 bg-[#4a3525] text-white py-3 px-6 rounded-xl font-black text-lg shadow-[0_4px_0_#2d2016] hover:bg-[#5c4331] active:translate-y-1 active:shadow-none transition-all self-center w-64">🔄 再來一局</button></div>`;
+
+            container.innerHTML += reviewHtml;
+        }
+
+        window.onload = () => {
+            loadGameLevels();
+            initCamera();
+        };
+    </script>
+</body>
+
+</html>
