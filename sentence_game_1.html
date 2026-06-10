@@ -554,7 +554,7 @@
             zone.innerHTML = '';
             selectedWords.forEach((word, idx) => {
                 const badge = document.createElement('div');
-                badge.className = "bg-yellow-300 border-2 border-[#4a3525] px-4 py-2 rounded-lg cursor-pointer font-black shadow-sm hover:-translate-y-1 transition-transform";
+                badge.className = "bg-yellow-300 text-[#4a3525] border-2 border-[#4a3525] px-4 py-2 rounded-lg cursor-pointer font-black shadow-sm hover:-translate-y-1 transition-transform";
                 badge.textContent = word;
                 badge.onclick = () => {
                     AudioManager.playClick();
