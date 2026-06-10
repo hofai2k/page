@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>DC Comics</title>
+</head>
+
+<body>
+    <h1>Dummy</h1>
+
+    <div id="dc">
+
+    </div>
+    <script>
+        var turns = ['d', 'c'];
+        var turnIdx = 0;
+        const MAX = 10;
+        var n = Math.floor(Math.random() * MAX) + 1;
+        turnIdx = Math.floor(Math.random() * 2);
+
+        var numA;
+        var numB;
+
+        var tmp = draw(turnIdx, n);
+
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+        tmp = draw(turnIdx, tmp);
+
+
+
+        function draw(i, num) {
+
+
+            turnIdx = (i += 1) % 2;
+
+            if (turns[turnIdx] === 'd' && num <= 1) {
+                turnIdx = 1;
+            }
+
+            if (turns[turnIdx] === 'c' && num >= MAX) {
+                turnIdx = 0;
+            }
+
+            if (turns[turnIdx] === 'd') {
+
+                numA = Math.floor(Math.random() * num) + 1;
+                numB = num - numA;
+                console.log("D", num, '=', numA, '+', numB, '*');
+
+
+            } else if (turns[turnIdx] === 'c') {
+
+                numA = Math.floor(Math.random() * (MAX - num)) + 1;
+                numB = num + numA;
+                console.log("C", num, '+', numA, '=', numB, '*');
+            }
+
+            return numB;
+
+        }
+    </script>
+
+</body>
+
+</html>
