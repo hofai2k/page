@@ -320,38 +320,38 @@
 
                 if (trackName === 'p1') {
                     // Upbeat Overworld Mario theme sequence in C-Major
-                    Tone.Transport.bpm.value = 180;
+                    Tone.Transport.bpm.value = 110;
                     melodyNotes = [
-                        "E5", "E5", null, "E5", null, "C5", "E5", null,
-                        "G5", null, null, null, "G4", null, null, null,
-                        "C5", null, null, "G4", null, null, "E4", null,
-                        null, "A4", null, "B4", null, "Bb4", "A4", null
+                        "C4", "E4", "G4", "A4", "G4", "E4", "D4", null,
+                        "C4", "E4", "G4", "A4", "C5", "A4", "G4", null,
+                        "A4", "C5", "E5", "D5", "C5", "A4", "G4", null,
+                        "F4", "A4", "C5", "A4", "G4", "E4", "D4", "C4"
                     ];
                 } else if (trackName === 'p2') {
                     // Mysterious, slower Underground-style chromatic walk
-                    Tone.Transport.bpm.value = 140;
+                    Tone.Transport.bpm.value = 110;
                     melodyNotes = [
-                        "C4", "C5", "A3", "A4", "Bb3", "Bb4", null, null,
-                        "F3", "F4", "D3", "D4", "Eb3", "Eb4", null, null,
-                        "C4", "C5", "A3", "A4", "Bb3", "Bb4", null, null,
-                        "G3", "G4", "E3", "E4", "F3", "F4", null, null
+                        "F3", "A3", "C4", "E4", "D4", null, "C4", null,
+                        "G3", "B3", "D4", "F4", "E4", null, "D4", null,
+                        "E3", "G3", "B3", "D4", "C4", null, "A3", null,
+                        "A3", "C4", "E4", "G4", "F4", "E4", "D4", "C4"
                     ];
                 } else if (trackName === 'summary') {
                     // Triumphant climbing Mario Victory / Level-Clear fanfare sequence
-                    Tone.Transport.bpm.value = 160;
+                    Tone.Transport.bpm.value = 110;
                     melodyNotes = [
-                        "G4", "C5", "E5", "G5", "C6", "E6", "G6", null,
-                        "E6", "G6", null, "A4", "D5", "F#5", "A5", "D6",
-                        "F#6", "A6", null, "F#6", "A6", null, "B4", "E5",
-                        "G#5", "B5", "E6", "G#6", "B6", null, "G#6", "B6"
+                        "C4", "E4", "G4", "C5", "E5", "G5", "C6", null,
+                        "F4", "A4", "C5", "F5", "A5", "C6", "F6", null,
+                        "G4", "B4", "D5", "G5", "B5", "D6", "G6", null,
+                        "C5", "E5", "G5", "C6", null, null, null, null
                     ];
                 }
 
                 this.currentBgmSequence = new Tone.Sequence((time, note) => {
                     if (note) {
-                        this.bgmSynth.triggerAttackRelease(note, "16n", time);
+                        this.bgmSynth.triggerAttackRelease(note, "8n", time);
                     }
-                }, melodyNotes, "16n");
+                }, melodyNotes, "8n");
 
                 this.currentBgmSequence.loop = true;
                 this.currentBgmSequence.start(0);
