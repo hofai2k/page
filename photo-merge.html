@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>相片合併</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .layout-container {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* --- Mobile Header Bar --- */
+        .mobile-header {
+            display: none;
+            background-color: #1e293b;
+            color: white;
+            padding: 10px 15px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 90;
+        }
+
+        .btn-hamburger {
+            background-color: #334155;
+            color: white;
+            padding: 8px 12px;
+            font-size: 18px;
+            border-radius: 6px;
+            box-shadow: none;
+        }
+
+        .mobile-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+
+        /* --- Sidebar Redesign (Desktop & Collapsible Base) --- */
+        .sidebar {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 260px;
+            flex-shrink: 0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+
+        .btn-close-menu {
+            display: none;
+            background-color: #f43f5e;
+            color: white;
+            margin-bottom: -5px;
+        }
+
+        /* Sidebar Section Containers */
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 2px;
+            font-weight: 700;
+        }
+
+        /* Button Grid Alignments */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .grid-1col {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        /* Global Button Styling */
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            background-color: #334155;
+            color: #f1f5f9;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        button:hover {
+            background-color: #475569;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        /* Active Canvas Indicator */
+        .btn-size.active-canvas {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Add Photo Button Styling */
+        .btn-add-photo {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-add-photo:hover {
+            background-color: #059669;
+        }
+
+        /* Border Settings Block */
+        .control-group {
+            background-color: #0f172a;
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid #334155;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 12px;
+            color: #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Color Picker Dots */
+        .color-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.1);
+        }
+
+        .color-dot.active {
+            border-color: #3b82f6;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Range Slider Styling */
+        .range-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .border-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #334155;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .border-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .border-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .border-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.1s ease;
+        }
+
+        .border-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .width-val {
+            font-size: 11px;
+            color: #94a3b8;
+            font-family: monospace;
+        }
+
+        /* Download Button Sticky to Bottom */
+        .btn-purple {
+            background-color: #6366f1;
+            color: white;
+            padding: 14px;
+            font-size: 14px;
+            line-height: 1.3;
+        }
+
+        /* Backdrop Layer for Mobile */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 95;
+        }
+
+        /* Canvas Layout Viewport */
+        .main-content {
+            flex-grow: 1;
+            background-color: #ffffff;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            position: relative;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        canvas {
+            background-color: #ffffff;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border: 1px dashed #cbd5e1;
+            cursor: default;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* --- Responsive iPhone / Mobile Layout Modifications --- */
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .layout-container {
+                flex-direction: column;
+                height: 100vh;
+                padding: 70px 10px 10px 10px;
+            }
+
+            /* Turn sidebar into hidden off-canvas left panel */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                height: 100vh;
+                width: 270px;
+                border-radius: 0 16px 16px 0;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-backdrop.open {
+                display: block;
+            }
+
+            .btn-close-menu {
+                display: block;
+            }
+
+            .main-content {
+                height: 100%;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mobile-header">
+        <button id="btn-open-menu" class="btn-hamburger">☰</button>
+        <div class="mobile-title">Canvas Interactive Editor</div>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div id="menu-backdrop" class="sidebar-backdrop"></div>
+
+    <div class="layout-container">
+        <div id="app-sidebar" class="sidebar">
+
+            <button id="btn-close-sidebar" class="btn-close-menu">✕ Close Menu</button>
+
+            <div class="menu-section">
+                <div class="section-title">1. 選擇畫布大小</div>
+                <div class="grid-1col">
+                    <button id="btn-preset-6in4r" class="btn-size" style="background-color: #2563eb; color: #ffffff;">4R
+                        橫向 x 1.5×2 吋 6張</button>
+
+                    <button id="btn-preset-9in4r" class="btn-size" style="background-color: #2563eb; color: #ffffff;">4R
+                        橫向 x 1×1.5 吋 9張</button>
+
+                    <button id="btn-preset-6inpc" class="btn-size"
+                        style="background-color: #2563eb; color: #ffffff;">Canon Post Card
+                        橫向 x 1.5×2 吋 6張</button>
+
+                    <button id="btn-preset-9inpc" class="btn-size"
+                        style="background-color: #2563eb; color: #ffffff;">Canon Post Card
+                        橫向 x 1×1.5 吋 9張</button>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="section-title">2. 加入相片</div>
+                <div class="grid-2col">
+                    <button id="btn-shape-1" class="btn-add-photo">1.5×2 吋</button>
+                    <button id="btn-shape-2" class="btn-add-photo">1×1.5 吋</button>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="section-title">3. 相片邊框樣式</div>
+                <div class="control-group">
+                    <div class="setting-item">
+                        <label>邊框顏色</label>
+                        <div class="color-options">
+                            <div class="color-dot active" data-color="#d3d3d3"
+                                style="background-color: #d3d3d3; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);">
+                            </div>
+                            <div class="color-dot" data-color="#ffffff"
+                                style="background-color: #ffffff; box-shadow: inset 0 0 0 1px #cbd5e1;"></div>
+                            <div class="color-dot" data-color="#add8e6" style="background-color: #add8e6;"></div>
+                            <div class="color-dot" data-color="#ffcccb" style="background-color: #ffcccb;"></div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>邊框寬度 <span id="width-display" class="width-val">10px</span></label>
+                        <div class="range-container">
+                            <input type="range" id="border-range" class="border-slider" min="1" max="100" value="10">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-download" class="btn-purple">下載相片</button>
+        </div>
+
+        <div class="main-content">
+            <canvas id="myCanvas"></canvas>
+        </div>
+    </div>
+
+    <input type="file" id="file-input" accept="image/*">
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const fileInput = document.getElementById('file-input');
+
+        const sidebar = document.getElementById('app-sidebar');
+        const backdrop = document.getElementById('menu-backdrop');
+        const openMenuBtn = document.getElementById('btn-open-menu');
+        const closeMenuBtn = document.getElementById('btn-close-sidebar');
+        
+        const borderRange = document.getElementById('border-range');
+        const widthDisplay = document.getElementById('width-display');
+
+        let shapes = [];
+        let shapeCounter = 0;
+        let selectedShapeForUpload = null;
+
+        // Border options permanently locked to true
+        const isBorderEnabled = true;
+        let currentBorderColor = '#d3d3d3';
+        let currentBorderWidthSetting = '10';
+
+        let isDragging = false;
+        let draggedShape = null;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let clickPreventedByDrag = false;
+
+        const deleteBtnRadius = 24;
+
+        function toggleMobileMenu(shouldOpen) {
+            if (shouldOpen) {
+                sidebar.classList.add('open');
+                backdrop.classList.add('open');
+            } else {
+                sidebar.classList.remove('open');
+                backdrop.classList.remove('open');
+            }
+        }
+
+        openMenuBtn.addEventListener('click', () => toggleMobileMenu(true));
+        closeMenuBtn.addEventListener('click', () => toggleMobileMenu(false));
+        backdrop.addEventListener('click', () => toggleMobileMenu(false));
+
+        function drawCanvas(isExporting = false) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (shapes.length === 0 && !isExporting) {
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = 'bold 120px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('準備比例3x4的相片', canvas.width / 2, canvas.height / 2);
+            }
+
+            shapes.forEach(shape => {
+                ctx.save();
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
+
+                if (shape.img && shape.img.complete) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(shape.x, shape.y, shape.w, shape.h);
+                    ctx.clip();
+
+                    const imgW = shape.img.width;
+                    const imgH = shape.img.height;
+                    const imgRatio = imgW / imgH;
+                    const containerRatio = shape.w / shape.h;
+
+                    let renderW, renderH, renderX, renderY;
+
+                    if (imgRatio > containerRatio) {
+                        renderH = shape.h;
+                        renderW = shape.h * imgRatio;
+                        renderY = shape.y;
+                        renderX = shape.x + (shape.w - renderW) / 2;
+                    } else {
+                        renderW = shape.w;
+                        renderH = shape.w / imgRatio;
+                        renderX = shape.x;
+                        renderY = shape.y + (shape.h - renderH) / 2;
+                    }
+
+                    ctx.drawImage(shape.img, renderX, renderY, renderW, renderH);
+                    ctx.restore();
+                } else if (!isExporting) {
+                    ctx.strokeStyle = '#94a3b8';
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([12, 8]);
+                    ctx.strokeRect(shape.x + 4, shape.y + 4, shape.w - 8, shape.h - 8);
+                    ctx.setLineDash([]);
+
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = 'bold 36px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('＋ 加入相片', shape.x + shape.w / 2, shape.y + shape.h / 2 - 20);
+
+                    ctx.font = '28px sans-serif';
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.fillText(`${shape.labelName}`, shape.x + shape.w / 2, shape.y + shape.h / 2 + 25);
+                }
+
+                // Render dynamic stroke configurations directly
+                if (isBorderEnabled) {
+                    ctx.lineWidth = parseInt(currentBorderWidthSetting, 10);
+                    ctx.strokeStyle = currentBorderColor;
+                    ctx.strokeRect(shape.x, shape.y, shape.w, shape.h);
+                }
+
+                if (!isExporting) {
+                    ctx.beginPath();
+                    ctx.arc(shape.x + shape.w, shape.y, deleteBtnRadius, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#f43f5e';
+                    ctx.fill();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 26px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('✕', shape.x + shape.w, shape.y);
+                }
+
+                ctx.restore();
+            });
+        }
+
+        function setCanvasSize(width, height, activeBtnId) {
+            canvas.width = width;
+            canvas.height = height;
+
+            document.querySelectorAll('.btn-size').forEach(btn => btn.classList.remove('active-canvas'));
+            if (activeBtnId) {
+                document.getElementById(activeBtnId).classList.add('active-canvas');
+            }
+            drawCanvas();
+            toggleMobileMenu(false);
+        }
+
+        function generatePresetLayout(el, photoW, photoH, cols, rows, width, height) {
+            canvas.width = width;
+            canvas.height = height;
+
+            document.querySelectorAll('.btn-size').forEach(btn => btn.classList.remove('active-canvas'));
+            if (el) {
+                document.getElementById(el).classList.add('active-canvas');
+            }
+
+            shapes = [];
+            shapeCounter = 0;
+
+            const totalGridW = cols * photoW;
+            const totalGridH = rows * photoH;
+
+            const startX = (canvas.width - totalGridW) / 2;
+            const startY = (canvas.height - totalGridH) / 2;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    shapes.push({
+                        id: Date.now() + Math.random() + (row * cols + col),
+                        x: startX + (col * photoW),
+                        y: startY + (row * photoH),
+                        w: photoW,
+                        h: photoH,
+                        labelName: '1.5 × 2 吋',
+                        img: null
+                    });
+                }
+            }
+
+            drawCanvas();
+            toggleMobileMenu(false);
+        }
+
+        function createPlaceholderShape(width, height, label) {
+            shapeCounter++;
+            const targetX = (canvas.width - width) / 2 + (shapeCounter * 40 - 80);
+            const targetY = (canvas.height - height) / 2 + (shapeCounter * 40 - 80);
+
+            shapes.push({
+                id: Date.now() + Math.random(),
+                x: targetX,
+                y: targetY,
+                w: width,
+                h: height,
+                labelName: label,
+                img: null
+            });
+
+            drawCanvas();
+            toggleMobileMenu(false);
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file || !selectedShapeForUpload) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const img = new Image();
+                img.onload = function () {
+                    selectedShapeForUpload.img = img;
+                    selectedShapeForUpload = null;
+                    fileInput.value = '';
+                    drawCanvas();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function getCanvasPointerCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            return {
+                x: (clientX - rect.left) * (canvas.width / rect.width),
+                y: (clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function handlePointerDown(e) {
+            const coords = getCanvasPointerCoords(e);
+            clickPreventedByDrag = false;
+
+            for (let i = shapes.length - 1; i >= 0; i--) {
+                const s = shapes[i];
+                const dx = coords.x - (s.x + s.w);
+                const dy = coords.y - s.y;
+                if (Math.sqrt(dx * dx + dy * dy) <= deleteBtnRadius) {
+                    shapes.splice(i, 1);
+                    drawCanvas();
+                    return;
+                }
+            }
+
+            for (let i = shapes.length - 1; i >= 0; i--) {
+                const s = shapes[i];
+                if (coords.x >= s.x && coords.x <= s.x + s.w && coords.y >= s.y && coords.y <= s.y + s.h) {
+                    isDragging = true;
+                    draggedShape = s;
+                    dragStartX = coords.x - s.x;
+                    dragStartY = coords.y - s.y;
+
+                    shapes.splice(i, 1);
+                    shapes.push(draggedShape);
+
+                    canvas.style.cursor = 'move';
+                    drawCanvas();
+                    break;
+                }
+            }
+        }
+
+        function handlePointerMove(e) {
+            if (!isDragging || !draggedShape) return;
+            if (e.cancelable) e.preventDefault();
+
+            const coords = getCanvasPointerCoords(e);
+            const newX = coords.x - dragStartX;
+            const newY = coords.y - dragStartY;
+
+            if (Math.abs(newX - draggedShape.x) > 3 || Math.abs(newY - draggedShape.y) > 3) {
+                clickPreventedByDrag = true;
+            }
+
+            draggedShape.x = newX;
+            draggedShape.y = newY;
+            drawCanvas();
+        }
+
+        function handlePointerUp(e) {
+            if (!isDragging) return;
+
+            if (!clickPreventedByDrag && draggedShape) {
+                selectedShapeForUpload = draggedShape;
+                fileInput.click();
+            }
+
+            isDragging = false;
+            draggedShape = null;
+            canvas.style.cursor = 'default';
+        }
+
+        canvas.addEventListener('mousedown', handlePointerDown);
+        window.addEventListener('mousemove', handlePointerMove);
+        window.addEventListener('mouseup', handlePointerUp);
+
+        canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
+        window.addEventListener('touchmove', handlePointerMove, { passive: false });
+        window.addEventListener('touchend', handlePointerUp);
+
+        document.getElementById('btn-preset-6in4r').addEventListener('click', () => generatePresetLayout('btn-preset-6in4r', 750, 1000, 3, 2, 3000, 2000));
+        document.getElementById('btn-preset-9in4r').addEventListener('click', () => generatePresetLayout('btn-preset-9in4r', 500, 750, 3, 3, 2000, 3000));
+
+        document.getElementById('btn-preset-6inpc').addEventListener('click', () => generatePresetLayout('btn-preset-6inpc', 750, 1000, 3, 2, 2970, 2000));
+        document.getElementById('btn-preset-9inpc').addEventListener('click', () => generatePresetLayout('btn-preset-9inpc', 500, 750, 3, 3, 2000, 2970));
+
+        document.getElementById('btn-shape-1').addEventListener('click', () => createPlaceholderShape(750, 1000, '1.5 × 2 吋'));
+        document.getElementById('btn-shape-2').addEventListener('click', () => createPlaceholderShape(500, 750, '1 × 1.5 吋'));
+
+        const colorDots = document.querySelectorAll('.color-dot');
+        colorDots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                colorDots.forEach(d => d.classList.remove('active'));
+                e.target.classList.add('active');
+
+                currentBorderColor = e.target.dataset.color;
+                drawCanvas();
+            });
+        });
+
+        // Input listener handles slider interaction in real time
+        borderRange.addEventListener('input', (e) => {
+            currentBorderWidthSetting = e.target.value;
+            widthDisplay.textContent = `${currentBorderWidthSetting}px`;
+            drawCanvas();
+        });
+
+        document.getElementById('btn-download').addEventListener('click', () => {
+            drawCanvas(true);
+            const link = document.createElement('a');
+            link.download = 'canvas-export.jpg';
+            link.href = canvas.toDataURL ? canvas.toDataURL('image/jpeg', 0.95) : canvas.toDataURL('image/jpeg', 0.95);
+            link.click();
+            drawCanvas(false);
+            toggleMobileMenu(false);
+        });
+
+        setCanvasSize(3000, 2000, '');
+    </script>
+</body>
+
+</html>
