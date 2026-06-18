@@ -7,27 +7,27 @@
     <title>音訊與動態動態文本管理器</title>
     <style>
         :root {
-            --bg-app: #f8fafc;
+            --bg-app: #f1f5f9;
             --bg-card: #ffffff;
-            --text-main: #0f172a;
+            --text-main: #1e293b;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --border-color: #f1f5f9;
 
             /* Action Colors */
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
             --success: #10b981;
             --success-hover: #059669;
             --danger: #ef4444;
-            --danger-hover: #b91c1c;
-            --utility: #f1f5f9;
-            --utility-hover: #e2e8f0;
+            --danger-hover: #dc2626;
+            --utility: #e2e8f0;
+            --utility-hover: #cbd5e1;
 
             /* Feedback States */
-            --playing-border: #3b82f6;
-            --playing-bg: #f0f7ff;
-            --selected-border: #6366f1;
-            --selected-shadow: rgba(99, 102, 241, 0.2);
+            --playing-border: #6366f1;
+            --playing-bg: #f8fafc;
+            --selected-border: #a855f7;
+            --selected-shadow: rgba(168, 85, 247, 0.2);
         }
 
         * {
@@ -37,7 +37,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-app);
             color: var(--text-main);
             padding: 40px 20px;
@@ -49,8 +49,8 @@
 
         /* 專注/劇場模式背景 */
         body.focus-mode-active {
-            background-color: #0f172a; /* 深色背景防止分心 */
-            overflow: hidden; /* 防止滾動 */
+            background-color: #0f172a; 
+            overflow: hidden; 
         }
 
         .app-container {
@@ -59,7 +59,6 @@
             transition: opacity 0.3s ease, filter 0.3s ease;
         }
 
-        /* 當進入專注模式時，隱藏主容器內容 */
         body.focus-mode-active .app-container {
             opacity: 0.1;
             filter: blur(4px);
@@ -68,7 +67,7 @@
 
         h2 {
             font-size: 1.75rem;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 24px;
             color: var(--text-main);
             letter-spacing: -0.025em;
@@ -82,10 +81,10 @@
             align-items: center;
             background: var(--bg-card);
             padding: 18px 24px;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            margin-bottom: 32px;
-            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
         }
 
         .global-settings {
@@ -97,8 +96,8 @@
             font-weight: 600;
             color: var(--text-main);
             background: #f8fafc;
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
         }
 
@@ -107,29 +106,47 @@
         }
 
         .global-settings input[type="number"] {
-            width: 55px;
+            width: 60px;
             padding: 6px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-main);
             outline: none;
+        }
+
+        .global-voice-select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #8b5cf6;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            max-width: 280px;
+        }
+
+        .global-voice-select option {
+            background-color: white;
+            color: var(--text-main);
         }
 
         /* 按鈕基礎樣式 */
         button {
             padding: 10px 16px;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             font-size: 0.875rem;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease-in-out;
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
         button:active {
@@ -137,114 +154,52 @@
         }
 
         /* 工具列按鈕顏色 */
-        .add-btn {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .add-btn:hover {
-            background-color: var(--success-hover);
-        }
-
-        .add-wait-btn {
-            background-color: #f59e0b;
-            color: white;
-        }
-
-        .add-wait-btn:hover {
-            background-color: #d97706;
-        }
-
-        .play-all-btn {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .play-all-btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .stop-all-btn {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        .stop-all-btn:hover {
-            background-color: var(--danger-hover);
-        }
-
-        .utility-btn {
-            background-color: var(--utility);
-            color: #334155;
-        }
-
-        .utility-btn:hover {
-            background-color: var(--utility-hover);
-        }
-
-        .export-btn {
-            background-color: #0ea5e9;
-            color: white;
-        }
-
-        .export-btn:hover {
-            background-color: #0284c7;
-        }
-
-        .import-btn {
-            background-color: #64748b;
-            color: white;
-        }
-
-        .import-btn:hover {
-            background-color: #475569;
-        }
-
-        .global-lang-btn {
-            background-color: #8b5cf6;
-            color: white;
-        }
-
-        .global-lang-btn:hover {
-            background-color: #7c3aed;
-        }
+        .add-btn { background-color: var(--success); color: white; }
+        .add-btn:hover { background-color: var(--success-hover); }
+        .add-wait-btn { background-color: #f59e0b; color: white; }
+        .add-wait-btn:hover { background-color: #d97706; }
+        .play-all-btn { background-color: var(--primary); color: white; }
+        .play-all-btn:hover { background-color: var(--primary-hover); }
+        .stop-all-btn { background-color: var(--danger); color: white; }
+        .stop-all-btn:hover { background-color: var(--danger-hover); }
+        .utility-btn { background-color: var(--utility); color: #334155; }
+        .utility-btn:hover { background-color: var(--utility-hover); }
+        .export-btn { background-color: #0ea5e9; color: white; }
+        .export-btn:hover { background-color: #0284c7; }
+        .import-btn { background-color: #64748b; color: white; }
+        .import-btn:hover { background-color: #475569; }
 
         /* 卡片網格 */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 24px;
             width: 100%;
         }
 
-        /* 卡片樣式 (固定大小) */
+        /* 卡片樣式 (Modern Clean) */
         .record-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-top: 6px solid var(--card-accent, #64748b);
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            width: 320px;
-            height: 250px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+            width: 100%;
+            min-height: 250px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             position: relative;
-            cursor: pointer;
         }
 
-        /* 點選選取狀態 */
         .record-card.selected-card {
             border-color: var(--selected-border) !important;
-            box-shadow: 0 0 0 3px var(--selected-shadow), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 4px var(--selected-shadow), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
         }
 
-        /* 拖拽中的樣式狀態 */
         .record-card.dragging {
-            opacity: 0.4;
+            opacity: 0.5;
             border: 2px dashed #94a3b8;
         }
 
@@ -252,40 +207,180 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 24px;
+            padding: 12px 16px;
             cursor: move;
             user-select: none;
-            background: #f8fafc;
-            padding: 4px 8px;
-            margin: -16px -16px 12px -16px;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            border-bottom: 1px solid var(--border-color);
+            background: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            border-radius: 16px 16px 0 0;
         }
 
         .card-title {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--text-muted);
+            color: #334155;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-title .grip {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex-grow: 1;
+        }
+
+        /* 圖片區域 (1:1 Ratio) */
+        .image-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2px;
+        }
+
+        .gallery-header .title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+        }
+
+        .gallery-header .badge {
+            font-size: 0.65rem;
+            background-color: #f3e8ff;
+            color: #a855f7;
+            padding: 2px 8px;
+            border-radius: 999px;
             font-weight: 700;
+        }
+
+        .image-scroll-area {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: thin;
+        }
+
+        .image-scroll-area::-webkit-scrollbar {
+            height: 6px;
+        }
+        .image-scroll-area::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .image-item-wrapper {
+            position: relative;
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px; /* 1:1 比例 */
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .image-item-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .image-item-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        .image-delete-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .image-item-wrapper:hover .image-delete-btn {
+            opacity: 1;
+        }
+
+        .add-image-btn {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px; /* 1:1 比例 */
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-image-btn:hover {
+            border-color: #a855f7;
+            color: #a855f7;
+            background: #faf5ff;
+        }
+
+        .add-image-btn .icon {
+            background: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 14px;
         }
 
         /* 密碼式文字框 */
         .input-wrapper {
             display: flex;
-            gap: 8px;
             width: 100%;
-            height: 110px;
             position: relative;
         }
 
         textarea {
             width: 100%;
-            height: 100%;
-            padding: 10px 36px 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            height: 120px;
+            padding: 16px 44px 16px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             font-family: ui-monospace, monospace;
             font-size: 0.9rem;
             color: var(--text-main);
@@ -296,9 +391,9 @@
         }
 
         textarea:focus {
-            border-color: var(--card-accent, var(--primary));
-            background-color: var(--bg-card);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.05);
+            background-color: #ffffff;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
         }
 
         textarea.masked-active {
@@ -306,23 +401,63 @@
             text-security: disc;
         }
 
-        /* 雙按鈕浮動定位 (顯示/隱藏) */
         .toggle-btn {
             position: absolute;
-            right: 8px;
-            top: 8px;
-            background-color: #f1f5f9;
+            right: 12px;
+            top: 12px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
             color: #475569;
             padding: 6px;
-            border-radius: 6px;
+            border-radius: 8px;
             z-index: 2;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .toggle-btn:hover {
-            background-color: #e2e2e0;
+            background-color: #f1f5f9;
         }
+
+        /* 卡片底部操作鍵 (Modern Clean Colors) */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px 16px 16px;
+            background: #ffffff;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .card-actions button {
+            flex: 1;
+            padding: 12px 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            border-radius: 12px;
+        }
+
+        .record-btn { background-color: #ffebee; color: #e53e3e; }
+        .record-btn:hover { background-color: #ffcdd2; }
+        .record-btn.recording { background-color: var(--danger); color: white; animation: blink 1.2s infinite; }
+
+        .play-btn { background-color: #ebf8ff; color: #2b6cb0; }
+        .play-btn:hover:not(:disabled) { background-color: #d8effd; }
+        .play-btn:disabled { background-color: #f1f5f9; color: #cbd5e1; cursor: not-allowed; }
+
+        .tts-btn { background-color: #fef3c7; color: #b7791f; }
+        .tts-btn:hover { background-color: #fde68a; }
+
+        .delete-btn {
+            background-color: transparent;
+            color: #94a3b8;
+            border-radius: 50%;
+            padding: 4px;
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+        .delete-btn:hover { color: var(--danger); background-color: #fee2e2; }
 
         /* 等待卡片專屬內層樣式 */
         .wait-card-content {
@@ -330,111 +465,37 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-grow: 1;
-            gap: 12px;
+            padding: 32px 16px;
+            gap: 16px;
         }
 
         .wait-card-clock {
-            font-size: 2.5rem;
+            font-size: 3rem;
             transition: font-size 0.3s ease;
         }
 
         .wait-input-group {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 600;
-        }
-
-        .wait-input-group input {
-            width: 70px;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1.1rem;
+            gap: 12px;
             font-weight: 700;
         }
 
-        /* 卡片底部操作鍵 */
-        .card-actions {
-            display: flex;
-            gap: 4px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 12px;
-            height: 48px;
-            align-items: center;
+        .wait-input-group input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
         }
 
-        .card-actions button {
-            flex: 1;
-            padding: 8px 4px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-        }
 
-        .record-btn {
-            background-color: #fee2e2;
-            color: #ef4444;
-        }
+                #fileInput { display: none; }
 
-        .record-btn:hover {
-            background-color: #fca5a5;
-        }
-
-        .record-btn.recording {
-            background-color: var(--danger);
-            color: white;
-            animation: blink 1.2s infinite;
-        }
-
-        .play-btn {
-            background-color: var(--card-light-accent, #dbeafe);
-            color: var(--card-accent, #2563eb);
-        }
-
-        .play-btn:hover:not(:disabled) {
-            filter: brightness(0.93);
-        }
-
-        .play-btn:disabled {
-            background-color: #f1f5f9;
-            color: #cbd5e1;
-            cursor: not-allowed;
-        }
-
-        /* 文字朗讀功能鍵樣式 */
-        .tts-btn {
-            background-color: #fef3c7;
-            color: #d97706;
-            flex: 1.5 !important; /* Make room for content */
-        }
-
-        .tts-btn:hover {
-            background-color: #fde68a;
-        }
-
-        .delete-btn {
-            background-color: transparent;
-            color: #94a3b8;
-            border-radius: 50%;
-            padding: 4px;
-            width: 24px;
-            height: 24px;
-        }
-
-        .delete-btn:hover {
-            color: var(--danger);
-            background-color: #fee2e2;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        /* ==========================================
-           劇場聚焦模式專屬樣式 (Focus Mode Overlay)
-           ========================================== */
+        /* 劇場聚焦模式 (Focus Mode) */
         .focus-overlay {
             position: fixed;
             top: 0;
@@ -443,100 +504,203 @@
             height: 100vh;
             background-color: rgba(15, 23, 42, 0.95);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            gap: 40px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
+            padding: 40px;
         }
 
-        body.focus-mode-active .focus-overlay {
-            opacity: 1;
-            pointer-events: auto;
+        body.focus-mode-active .focus-overlay { opacity: 1; pointer-events: auto; }
+
+        .focus-card-slot { 
+            width: 100%; 
+            height: 100%;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            max-width: 1400px;
         }
 
-        /* 放大播放中卡片的包裝層 */
-        .focus-card-slot {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 420px;
+        /* 移至右上角的停止按鈕 */
+        .focus-controls { 
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            z-index: 10000;
         }
-
-        /* 強制放大卡片 */
-        body.focus-mode-active .record-card.playing-now {
-            width: 650px;
-            height: 400px;
-            cursor: default;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border-color: var(--playing-border) !important;
-            background-color: var(--playing-bg);
-            transform: none;
-        }
-
-        /* 放大卡片內的文字與字體大小 */
-        body.focus-mode-active .record-card.playing-now textarea {
-            font-size: 1.6rem;
-            line-height: 1.5;
-            padding: 20px;
-        }
-
-        body.focus-mode-active .record-card.playing-now .input-wrapper {
-            height: 240px;
-        }
-
-        body.focus-mode-active .record-card.playing-now .wait-card-clock {
-            font-size: 5rem;
-        }
-
-        body.focus-mode-active .record-card.playing-now .wait-input-group span,
-        body.focus-mode-active .record-card.playing-now .wait-input-group input {
-            font-size: 2rem;
-        }
-
-        body.focus-mode-active .record-card.playing-now .wait-input-group input {
-            width: 120px;
-        }
-
-        /* 控制台按鈕放大 */
-        .focus-controls {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
+        
         .focus-stop-btn {
             background-color: var(--danger);
             color: white;
-            font-size: 1.5rem;
-            padding: 16px 40px;
-            border-radius: 50px;
-            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s, background-color 0.2s;
         }
-
+        
         .focus-stop-btn:hover {
             background-color: var(--danger-hover);
             transform: scale(1.05);
         }
 
-        @keyframes blink {
-            50% {
-                opacity: 0.6;
+        /* 重新組織 Focus Mode 下的卡片排版 */
+        body.focus-mode-active .record-card.playing-now {
+            width: 100%;
+            height: 100%;
+            max-height: 85vh;
+            cursor: default;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border-color: var(--playing-border) !important;
+            transform: none;
+            display: flex;
+            flex-direction: column;
+            border-radius: 24px;
+        }
+
+        /* 隱藏非必要的編輯控制項 (讓展示畫面更乾淨) */
+        body.focus-mode-active .record-card.playing-now .card-header .grip,
+        body.focus-mode-active .record-card.playing-now .card-header .delete-btn,
+        body.focus-mode-active .record-card.playing-now .add-image-btn,
+        body.focus-mode-active .record-card.playing-now .image-delete-btn,
+        body.focus-mode-active .record-card.playing-now .toggle-btn,
+        body.focus-mode-active .record-card.playing-now .card-actions {
+            display: none !important;
+        }
+
+        /* 卡片主體 - 雙欄並排設計 (左圖右文) */
+        body.focus-mode-active .record-card.playing-now .card-body {
+            flex-direction: row;
+            gap: 40px;
+            padding: 40px;
+            overflow: hidden; /* 防止超出 */
+            flex-grow: 1;
+        }
+
+        /* 左側圖片區塊放大 */
+        body.focus-mode-active .record-card.playing-now .image-gallery {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.focus-mode-active .record-card.playing-now .gallery-header .title {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+        
+        body.focus-mode-active .record-card.playing-now .gallery-header .badge {
+            font-size: 0.9rem;
+            padding: 4px 12px;
+        }
+
+        /* 圖片網格化展示 */
+        body.focus-mode-active .record-card.playing-now .image-scroll-area {
+            flex-wrap: wrap;
+            align-content: flex-start;
+            overflow-y: auto;
+            overflow-x: hidden;
+            gap: 20px;
+            padding-top: 16px;
+            padding-right: 8px; /* 給卷軸留空間 */
+        }
+
+        body.focus-mode-active .record-card.playing-now .image-item-wrapper {
+            width: calc(50% - 10px); /* 雙排 */
+            height: auto;
+            aspect-ratio: 1;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        body.focus-mode-active .record-card.playing-now .image-item-wrapper:hover img {
+            transform: none; /* 播放模式下不需要 hover 放大效果 */
+        }
+
+        /* 右側文字輸入區塊放大 */
+        body.focus-mode-active .record-card.playing-now .input-wrapper {
+            flex: 1.2;
+            height: 100%;
+        }
+
+        body.focus-mode-active .record-card.playing-now textarea {
+            height: 100%;
+            font-size: 2.2rem;
+            line-height: 1.7;
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            background-color: #fafafa;
+        }
+
+        /* 等待卡片(Wait Card)在 Focus Mode 下的特殊處理 */
+        body.focus-mode-active .record-card.playing-now .wait-card-content {
+            height: 100%;
+            justify-content: center;
+            gap: 40px;
+        }
+        
+        body.focus-mode-active .record-card.playing-now .wait-card-clock {
+            font-size: 8rem;
+        }
+
+        body.focus-mode-active .record-card.playing-now .wait-input-group {
+            font-size: 2.5rem;
+        }
+        
+        body.focus-mode-active .record-card.playing-now .wait-input-group input {
+            font-size: 3rem;
+            width: 150px;
+            padding: 16px;
+            border-width: 4px;
+        }
+
+        /* 針對小螢幕的自適應排版 */
+        @media (max-width: 900px) {
+            body.focus-mode-active .record-card.playing-now .card-body {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            body.focus-mode-active .record-card.playing-now .image-gallery,
+            body.focus-mode-active .record-card.playing-now .input-wrapper {
+                flex: none;
+                height: auto;
+            }
+            body.focus-mode-active .record-card.playing-now .image-item-wrapper {
+                width: 150px;
+            }
+            body.focus-mode-active .record-card.playing-now .image-scroll-area {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+            body.focus-mode-active .record-card.playing-now textarea {
+                min-height: 400px;
+                font-size: 1.5rem;
+            }
+            .focus-controls { 
+                top: 12px;
+                right: 12px;
             }
         }
+
+        @keyframes blink { 50% { opacity: 0.6; } }
+    
+     
     </style>
 </head>
 
 <body>
 
     <div class="focus-overlay" id="focusOverlay">
-        <div class="focus-card-slot" id="focusCardSlot">
-            </div>
+        <div class="focus-card-slot" id="focusCardSlot"></div>
         <div class="focus-controls">
             <button type="button" class="focus-stop-btn" id="focusStopBtn">🛑 停止播放並退出</button>
         </div>
@@ -570,7 +734,10 @@
                 <label for="globalWait" style="margin-left: 5px;">播放間隔 (秒):</label>
                 <input type="number" id="globalWait" min="0" max="30" value="0">
 
-                <button type="button" class="global-lang-btn" id="globalLangBtn" style="margin-left: 10px;">🗣️ 朗讀語音: 廣東話</button>
+                <label for="globalVoiceSelect" style="margin-left: 5px;">🗣️ 朗讀語音:</label>
+                <select id="globalVoiceSelect" class="global-voice-select">
+                    <option value="">載入系統語音中...</option>
+                </select>
             </div>
         </div>
 
@@ -587,13 +754,12 @@
         const hideAllBtn = document.getElementById('hideAllBtn');
         const globalLoopsInput = document.getElementById('globalLoops');
         const globalWaitInput = document.getElementById('globalWait');
-        const globalLangBtn = document.getElementById('globalLangBtn');
+        const globalVoiceSelect = document.getElementById('globalVoiceSelect');
         const exportBtn = document.getElementById('exportBtn');
         const triggerImportBtn = document.getElementById('triggerImportBtn');
         const fileInput = document.getElementById('fileInput');
         const dynamicContainer = document.getElementById('dynamicContainer');
 
-        // 聚焦模式 DOM
         const focusOverlay = document.getElementById('focusOverlay');
         const focusCardSlot = document.getElementById('focusCardSlot');
         const focusStopBtn = document.getElementById('focusStopBtn');
@@ -604,10 +770,10 @@
         let currentActiveAudio = null; 
         let currentWaitInterval = null; 
         let selectedCardId = null; 
-        let lastFocusedCardElement = null; // 用於記錄最後一張停留在畫面的卡片
+        let lastFocusedCardElement = null; 
         
-        // 全域語音設定: "繁" 代表廣東話, "簡" 代表普通話
-        let globalLangPref = "繁"; 
+        let systemVoices = [];
+        let selectedVoiceUri = "";
 
         const pastelColors = [
             { main: '#6366f1', light: '#e0e7ff' },
@@ -624,20 +790,58 @@
 
         initDragAndDrop();
 
-        // 全域語音按鈕點擊切換事件
-        globalLangBtn.addEventListener('click', () => {
-            if (globalLangPref === "繁") {
-                globalLangPref = "簡";
-                globalLangBtn.innerText = "🗣️ 朗讀語音: 普通話";
-            } else {
-                globalLangPref = "繁";
-                globalLangBtn.innerText = "🗣️ 朗讀語音: 廣東話";
+        function loadSystemVoices() {
+            if (typeof speechSynthesis === 'undefined') return;
+            const allVoices = window.speechSynthesis.getVoices();
+            systemVoices = allVoices.filter(voice => {
+                const nameLower = voice.name.toLowerCase();
+                const langLower = voice.lang.toLowerCase();
+                return nameLower.includes('hk') || langLower.includes('hk') ||
+                       nameLower.includes('tw') || langLower.includes('tw') ||
+                       nameLower.includes('zh') || langLower.includes('zh') ||
+                       nameLower.includes('cn') || langLower.includes('cn');
+            });
+
+            globalVoiceSelect.innerHTML = '';
+
+            if (systemVoices.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.innerText = "未偵測到指定的中文/廣東話系統語音";
+                globalVoiceSelect.appendChild(opt);
+                return;
             }
+
+            systemVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.voiceURI;
+                option.innerText = `${voice.name} (${voice.lang})`;
+                
+                if (!selectedVoiceUri && (voice.lang === 'zh-HK' || voice.lang.includes('HK'))) {
+                    option.selected = true;
+                    selectedVoiceUri = voice.voiceURI;
+                }
+                globalVoiceSelect.appendChild(option);
+            });
+
+            if (!selectedVoiceUri && globalVoiceSelect.options.length > 0) {
+                globalVoiceSelect.options[0].selected = true;
+                selectedVoiceUri = globalVoiceSelect.options[0].value;
+            }
+        }
+
+        if (typeof speechSynthesis !== 'undefined') {
+            loadSystemVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadSystemVoices;
+            }
+        }
+
+        globalVoiceSelect.addEventListener('change', (e) => {
+            selectedVoiceUri = e.target.value;
         });
 
-        // 輔助功能：將某一指定卡片搬移至劇場中央
         function moveCardToFocus(cardElement) {
-            // 如果中央已有舊卡片，在換新卡前，先將它恢復原本大小並送回網格
             if (lastFocusedCardElement && lastFocusedCardElement !== cardElement) {
                 lastFocusedCardElement.classList.remove('playing-now');
                 returnCardToOriginalGrid(lastFocusedCardElement);
@@ -647,7 +851,6 @@
             lastFocusedCardElement = cardElement;
         }
 
-        // 輔助功能：將留在劇場中央的卡片送回原網格位置
         function returnAllCardsFromFocus() {
             if (lastFocusedCardElement) {
                 lastFocusedCardElement.classList.remove('playing-now');
@@ -670,7 +873,7 @@
         function setupCardSelection(cardDiv, id) {
             cardDiv.addEventListener('click', (e) => {
                 if (document.body.classList.contains('focus-mode-active')) return;
-                if (e.target.closest('.card-actions') || e.target.classList.contains('delete-btn')) {
+                if (e.target.closest('.card-actions') || e.target.classList.contains('delete-btn') || e.target.closest('.image-gallery')) {
                     return; 
                 }
                 
@@ -687,8 +890,8 @@
             });
         }
 
-        // 1. 標準文字語音卡片工廠
-        function createRow(initialText = "", initialAudioBase64 = null, savedColorIndex = null) {
+        // 1. 標準文字語音卡片工廠 (Modern Clean)
+        function createRow(initialText = "", initialAudioBase64 = null, savedColorIndex = null, initialImages = []) {
             cardSequenceCounter++;
             const rowId = generateId();
 
@@ -700,6 +903,7 @@
                 type: 'audio_text',
                 textValue: initialText,
                 audioBase64: initialAudioBase64,
+                images: initialImages || [],
                 colorIndex: colorIndex,
                 domElement: null,
                 playAudioFn: null
@@ -721,12 +925,13 @@
             let audioChunks = [];
             let audioUrl = initialAudioBase64 ? initialAudioBase64 : null;
 
+            // --- HEADER ---
             const cardHeader = document.createElement('div');
             cardHeader.classList.add('card-header');
 
             const cardTitle = document.createElement('span');
             cardTitle.classList.add('card-title');
-            cardTitle.innerText = `⣿ 記錄卡片 #${cardSequenceCounter}`;
+            cardTitle.innerHTML = `<span class="grip">⣿</span> 記錄卡片 #${cardSequenceCounter}`;
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
@@ -741,6 +946,85 @@
             cardHeader.appendChild(cardTitle);
             cardHeader.appendChild(deleteBtn);
 
+            // --- CARD BODY ---
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+
+            // 1. Image Gallery Section (1:1 Ratio)
+            const imageGallery = document.createElement('div');
+            imageGallery.classList.add('image-gallery');
+
+            const galleryHeader = document.createElement('div');
+            galleryHeader.classList.add('gallery-header');
+            galleryHeader.innerHTML = `
+                <span class="title">附加圖片大圖</span>
+                <span class="badge">1:1 比例</span>
+            `;
+
+            const imageScrollArea = document.createElement('div');
+            imageScrollArea.classList.add('image-scroll-area');
+
+            // Hidden file input for adding images
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.accept = 'image/*';
+            imageInput.style.display = 'none';
+
+            const addImageBtn = document.createElement('button');
+            addImageBtn.type = 'button';
+            addImageBtn.classList.add('add-image-btn');
+            addImageBtn.innerHTML = `<div class="icon">➕</div>新增照片`;
+            
+            addImageBtn.onclick = () => imageInput.click();
+
+            imageInput.onchange = (e) => {
+                const file = e.target.files[0];
+                if(!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    rowDataObject.images.push(event.target.result);
+                    renderImages();
+                };
+                reader.readAsDataURL(file);
+                imageInput.value = ''; // reset
+            };
+
+            const renderImages = () => {
+                imageScrollArea.innerHTML = '';
+                
+                rowDataObject.images.forEach((imgSrc, idx) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.classList.add('image-item-wrapper');
+                    
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    
+                    const imgDelBtn = document.createElement('button');
+                    imgDelBtn.type = 'button';
+                    imgDelBtn.classList.add('image-delete-btn');
+                    imgDelBtn.innerText = '✕';
+                    imgDelBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        rowDataObject.images.splice(idx, 1);
+                        renderImages();
+                    };
+
+                    imgWrapper.appendChild(img);
+                    imgWrapper.appendChild(imgDelBtn);
+                    imageScrollArea.appendChild(imgWrapper);
+                });
+                
+                imageScrollArea.appendChild(addImageBtn);
+            };
+
+            // Initial render
+            renderImages();
+
+            imageGallery.appendChild(galleryHeader);
+            imageGallery.appendChild(imageScrollArea);
+            imageGallery.appendChild(imageInput);
+
+            // 2. Text Input Section
             const inputWrapper = document.createElement('div');
             inputWrapper.classList.add('input-wrapper');
 
@@ -770,6 +1054,11 @@
             inputWrapper.appendChild(textareaInput);
             inputWrapper.appendChild(toggleBtn);
 
+            // Append to body
+            cardBody.appendChild(imageGallery);
+            cardBody.appendChild(inputWrapper);
+
+            // --- ACTIONS FOOTER ---
             const cardActions = document.createElement('div');
             cardActions.classList.add('card-actions');
 
@@ -781,13 +1070,13 @@
             const playBtn = document.createElement('button');
             playBtn.type = 'button';
             playBtn.classList.add('play-btn');
-            playBtn.innerText = '▶️ 播放錄音';
+            playBtn.innerText = '▶️ 播放';
             playBtn.disabled = !audioUrl;
 
             const ttsBtn = document.createElement('button');
             ttsBtn.type = 'button';
             ttsBtn.classList.add('tts-btn');
-            ttsBtn.innerText = '🔊 朗讀文字';
+            ttsBtn.innerText = '🔊 朗讀';
 
             cardActions.appendChild(recordBtn);
             cardActions.appendChild(playBtn);
@@ -800,28 +1089,22 @@
                     recordBtn.classList.remove('recording');
                     return;
                 }
-
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
-
                     mediaRecorder.ondataavailable = (event) => audioChunks.push(event.data);
-
                     mediaRecorder.onstop = () => {
                         const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
                         audioUrl = URL.createObjectURL(audioBlob);
                         playBtn.disabled = false;
-
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = () => {
                             rowDataObject.audioBase64 = reader.result;
                         };
-
                         stream.getTracks().forEach(track => track.stop());
                     };
-
                     mediaRecorder.start();
                     recordBtn.innerText = '🛑 停止';
                     recordBtn.classList.add('recording');
@@ -870,20 +1153,12 @@
                         const playTtsInstance = () => {
                             if (!isGlobalPlaying) return resolve();
                             const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                            const voices = window.speechSynthesis.getVoices();
-                            
-                            let matchedVoice;
-                            if (globalLangPref === "繁") {
-                                matchedVoice = voices.find(v => v.lang === 'zh-HK' || v.lang.includes('HK')) || voices.find(v => v.lang === 'zh-TW' || v.lang.includes('TW'));
-                            } else {
-                                matchedVoice = voices.find(v => v.lang === 'zh-CN' || v.lang.includes('CN')) || voices.find(v => v.lang.startsWith('en'));
+                            if (selectedVoiceUri) {
+                                const matchedVoice = systemVoices.find(v => v.voiceURI === selectedVoiceUri);
+                                if (matchedVoice) utterance.voice = matchedVoice;
                             }
-                            
-                            if (matchedVoice) utterance.voice = matchedVoice;
-
                             utterance.onend = () => handleLoopDelay(playTtsInstance);
                             utterance.onerror = () => resolve();
-
                             window.speechSynthesis.speak(utterance);
                         };
                         playTtsInstance();
@@ -920,15 +1195,10 @@
                 moveCardToFocus(cardDiv);
 
                 const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                const voices = window.speechSynthesis.getVoices();
-                
-                let matchedVoice;
-                if (globalLangPref === "繁") {
-                    matchedVoice = voices.find(v => v.lang === 'zh-HK' || v.lang.includes('HK')) || voices.find(v => v.lang === 'zh-TW' || v.lang.includes('TW'));
-                } else {
-                    matchedVoice = voices.find(v => v.lang === 'zh-CN' || v.lang.includes('CN')) || voices.find(v => v.lang.startsWith('en'));
+                if (selectedVoiceUri) {
+                    const matchedVoice = systemVoices.find(v => v.voiceURI === selectedVoiceUri);
+                    if (matchedVoice) utterance.voice = matchedVoice;
                 }
-                if (matchedVoice) utterance.voice = matchedVoice;
 
                 const finishTts = () => {
                     returnAllCardsFromFocus();
@@ -938,17 +1208,16 @@
 
                 utterance.onend = finishTts;
                 utterance.onerror = finishTts;
-
                 window.speechSynthesis.speak(utterance);
             };
 
             cardDiv.appendChild(cardHeader);
-            cardDiv.appendChild(inputWrapper);
+            cardDiv.appendChild(cardBody);
             cardDiv.appendChild(cardActions);
             dynamicContainer.appendChild(cardDiv);
         }
 
-        // 2. 新增等待卡片工廠
+        // 2. 新增等待卡片工廠 (Modern Clean Styled)
         function createWaitRow(defaultSeconds = 5) {
             const rowId = generateId();
 
@@ -977,7 +1246,7 @@
 
             const cardTitle = document.createElement('span');
             cardTitle.classList.add('card-title');
-            cardTitle.innerText = `⣿ ⏳ 等待時間卡`;
+            cardTitle.innerHTML = `<span class="grip">⣿</span> ⏳ 等待時間卡`;
 
             const deleteBtn = document.createElement('button');
             deleteBtn.type = 'button';
@@ -1003,7 +1272,7 @@
             inputGroup.classList.add('wait-input-group');
 
             const labelStart = document.createElement('span');
-            labelStart.innerText = '暫停等待';
+            labelStart.innerText = '暫停';
 
             const secondsInput = document.createElement('input');
             secondsInput.type = 'number';
@@ -1077,10 +1346,6 @@
             cardDiv.appendChild(contentDiv);
             cardDiv.appendChild(cardActions);
             dynamicContainer.appendChild(cardDiv);
-        }
-
-        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
         }
 
         // 3. 順序播放全部邏輯
@@ -1263,13 +1528,19 @@
                 settings: {
                     globalLoops: parseInt(globalLoopsInput.value) || 1,
                     globalWait: parseInt(globalWaitInput.value) || 0,
-                    globalLangPref: globalLangPref
+                    selectedVoiceUri: selectedVoiceUri
                 },
                 items: rowsData.map(item => {
                     if (item.type === 'wait_timer') {
                         return { type: 'wait_timer', waitSeconds: item.waitSeconds };
                     } else {
-                        return { type: 'audio_text', text: item.textValue, audio: item.audioBase64, colorIndex: item.colorIndex };
+                        return { 
+                            type: 'audio_text', 
+                            text: item.textValue, 
+                            audio: item.audioBase64, 
+                            images: item.images, // Include images in export
+                            colorIndex: item.colorIndex 
+                        };
                     }
                 })
             };
@@ -1302,9 +1573,11 @@
                     if (importedData.settings) {
                         globalLoopsInput.value = importedData.settings.globalLoops || 1;
                         globalWaitInput.value = importedData.settings.globalWait || 0;
-                        if (importedData.settings.globalLangPref) {
-                            globalLangPref = importedData.settings.globalLangPref;
-                            globalLangBtn.innerText = globalLangPref === "繁" ? "🗣️ 朗讀語音: 廣東話" : "🗣️ 朗讀語音: 普通話";
+                        if (importedData.settings.selectedVoiceUri) {
+                            selectedVoiceUri = importedData.settings.selectedVoiceUri;
+                            if (globalVoiceSelect.querySelector(`option[value="${selectedVoiceUri}"]`)) {
+                                globalVoiceSelect.value = selectedVoiceUri;
+                            }
                         }
                     }
 
@@ -1314,7 +1587,8 @@
                             if (item.type === 'wait_timer') {
                                 createWaitRow(item.waitSeconds || 5);
                             } else {
-                                createRow(item.text || "", item.audio || null, item.colorIndex !== undefined ? item.colorIndex : null);
+                                // Added item.images Support for import
+                                createRow(item.text || "", item.audio || null, item.colorIndex !== undefined ? item.colorIndex : null, item.images || []);
                             }
                         });
                     }
