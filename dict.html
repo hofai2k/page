@@ -654,11 +654,11 @@
     </div>
 
     <div class="app-container">
-        <h2>音訊與機密文字卡片管理系統</h2>
+        <h2>音訊與單圖文本管理器</h2>
 
         <div class="controls-header">
-            <button type="button" class="export-btn" id="exportBtn">📥 匯出 JSON 備份</button>
-            <button type="button" class="import-btn" id="triggerImportBtn">📤 匯入 JSON 檔案</button>
+            <button type="button" class="export-btn" id="exportBtn">📥 匯出備份</button>
+            <button type="button" class="import-btn" id="triggerImportBtn">📤 匯入檔案</button>
             <input type="file" id="fileInput" accept=".json">
         </div>
 
@@ -1269,7 +1269,7 @@
             previewBtn.classList.add('preview-btn');
             previewBtn.innerText = '👁️ 預覽';
 
-            cardActions.appendChild(testBtn);
+            //cardActions.appendChild(testBtn);
             cardActions.appendChild(previewBtn);
 
             rowDataObject.playAudioFn = () => {
