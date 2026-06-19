@@ -105,30 +105,6 @@
             color: var(--text-muted);
         }
 
-        .global-settings input[type="number"] {
-            width: 60px;
-            padding: 6px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 700;
-            color: var(--text-main);
-            outline: none;
-        }
-
-        .global-voice-select {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #8b5cf6;
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 600;
-            outline: none;
-            cursor: pointer;
-            max-width: 280px;
-        }
-
         /* 屬性設定與按鈕 */
         button {
             padding: 10px 16px;
@@ -796,16 +772,20 @@
         .setting-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
-        .global-settings-panel input[type="number"] {
-            width: 48px;
-            padding: 4px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            text-align: center;
+        .global-settings-panel input[type="range"] {
+            width: 90px;
+            cursor: pointer;
+        }
+
+        .value-display {
             font-weight: 700;
+            color: var(--primary);
+            min-width: 24px;
+            display: inline-block;
+            text-align: center;
         }
 
         .global-voice-select {
@@ -896,15 +876,18 @@
             <div class="global-settings-panel">
                 <div class="setting-item">
                     <label for="globalLoops">重複:</label>
-                    <input type="number" id="globalLoops" min="1" max="10" value="1">次
+                    <input type="range" id="globalLoops" min="1" max="10" value="1">
+                    <span id="loopsValue" class="value-display">1</span>次
                 </div>
                 <div class="setting-item">
                     <label for="globalWait">間隔:</label>
-                    <input type="number" id="globalWait" min="0" max="30" value="0">秒
+                    <input type="range" id="globalWait" min="0" max="30" value="0">
+                    <span id="waitValue" class="value-display">0</span>秒
                 </div>
                 <div class="setting-item">
                     <label for="globalSpeed">⚡語速:</label>
-                    <input type="number" id="globalSpeed" min="0.5" max="3.0" step="0.1" value="1.0">
+                    <input type="range" id="globalSpeed" min="0.5" max="3.0" step="0.1" value="1.0">
+                    <span id="speedValue" class="value-display">1.0</span>
                 </div>
                 <div class="setting-item">
                     <label for="globalVoiceSelect">🗣️語音:</label>
@@ -940,9 +923,15 @@
         const stopAllBtn = document.getElementById('stopAllBtn');
         const showAllBtn = document.getElementById('showAllBtn');
         const hideAllBtn = document.getElementById('hideAllBtn');
+        
         const globalLoopsInput = document.getElementById('globalLoops');
         const globalWaitInput = document.getElementById('globalWait');
         const globalSpeedInput = document.getElementById('globalSpeed');
+        
+        const loopsValue = document.getElementById('loopsValue');
+        const waitValue = document.getElementById('waitValue');
+        const speedValue = document.getElementById('speedValue');
+
         const globalVoiceSelect = document.getElementById('globalVoiceSelect');
         const exportBtn = document.getElementById('exportBtn');
         const triggerImportBtn = document.getElementById('triggerImportBtn');
@@ -976,6 +965,11 @@
         const waitCardColor = { main: '#64748b', light: '#f1f5f9' };
 
         const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+        // 同步顯示滑桿數值
+        globalLoopsInput.addEventListener('input', (e) => loopsValue.innerText = e.target.value);
+        globalWaitInput.addEventListener('input', (e) => waitValue.innerText = e.target.value);
+        globalSpeedInput.addEventListener('input', (e) => speedValue.innerText = parseFloat(e.target.value).toFixed(1));
 
         initDragAndDrop();
 
@@ -1080,7 +1074,6 @@
             });
         }
 
-        // 1. 標準文字語音卡片工廠 (單圖版)
         function createRow(initialText = "", initialAudioBase64 = null, savedColorIndex = null, initialImages = []) {
             cardSequenceCounter++;
             const rowId = generateId();
@@ -1088,7 +1081,6 @@
             const colorIndex = savedColorIndex !== null ? savedColorIndex : Math.floor(Math.random() * pastelColors.length);
             const chosenColor = pastelColors[colorIndex];
 
-            // 相容舊資料
             let safeImageArray = [];
             if (initialImages && initialImages.length > 0) {
                 safeImageArray = [initialImages[0]];
@@ -1121,7 +1113,6 @@
             let audioChunks = [];
             let audioUrl = initialAudioBase64 ? initialAudioBase64 : null;
 
-            // --- HEADER ---
             const cardHeader = document.createElement('div');
             cardHeader.classList.add('card-header');
 
@@ -1142,11 +1133,9 @@
             cardHeader.appendChild(cardTitle);
             cardHeader.appendChild(deleteBtn);
 
-            // --- CARD BODY ---
             const cardBody = document.createElement('div');
             cardBody.classList.add('card-body');
 
-            // 1. Image Section
             const imageContainer = document.createElement('div');
             imageContainer.classList.add('image-container');
 
@@ -1164,7 +1153,7 @@
             addContent.onclick = () => imageInput.click();
 
             const previewImg = document.createElement('img');
-            previewImg.loading = 'lazy'; // <-- Add this line
+            previewImg.loading = 'lazy';
 
             const imgDelBtn = document.createElement('button');
             imgDelBtn.type = 'button';
@@ -1182,15 +1171,12 @@
                 const file = e.target.files[0];
                 if (!file) return;
 
-                // Create an image object to read the file's natural dimensions
                 const img = new Image();
-
                 img.onload = () => {
                     const MAX_DIMENSION = 1000;
                     let width = img.width;
                     let height = img.height;
 
-                    // Calculate new dimensions while maintaining aspect ratio
                     if (width > height) {
                         if (width > MAX_DIMENSION) {
                             height *= MAX_DIMENSION / width;
@@ -1203,33 +1189,25 @@
                         }
                     }
 
-                    // Create a canvas to draw and compress the image
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
-
-                    // Draw the image onto the canvas at the new dimensions
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Convert the canvas to a base64 string (JPEG format at 80% quality)
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.80);
-
-                    // Save to your data object and render
                     rowDataObject.images = [compressedBase64];
                     renderImageState();
                 };
 
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    // Trigger the image load event
                     img.src = event.target.result;
                 };
                 reader.readAsDataURL(file);
-
-                // Reset the input so the same file can be uploaded again if needed
                 imageInput.value = '';
             };
+
             imgDelBtn.onclick = (e) => {
                 e.stopPropagation();
                 rowDataObject.images = [];
@@ -1250,14 +1228,12 @@
 
             renderImageState();
 
-            // 2. Text Input Section
             const inputWrapper = document.createElement('div');
             inputWrapper.classList.add('input-wrapper');
 
             const textareaInput = document.createElement('textarea');
             textareaInput.classList.add('masked-active');
             textareaInput.value = initialText;
-            //textareaInput.placeholder = '請輸入備忘或文字內容...';
 
             textareaInput.addEventListener('input', (e) => {
                 rowDataObject.textValue = e.target.value;
@@ -1283,7 +1259,6 @@
             cardBody.appendChild(imageContainer);
             cardBody.appendChild(inputWrapper);
 
-            // --- ACTIONS FOOTER ---
             const cardActions = document.createElement('div');
             cardActions.classList.add('card-actions');
 
@@ -1444,7 +1419,6 @@
                 window.speechSynthesis.speak(utterance);
             };
 
-            // FIX: Added previously missing preview button click event handler!
             previewBtn.onclick = () => {
                 stopAllPlayback();
                 document.body.classList.add('focus-mode-active');
@@ -1458,7 +1432,6 @@
             dynamicContainer.appendChild(cardDiv);
         }
 
-        // 2. 新增等待卡片工廠 
         function createWaitRow(defaultSeconds = 5) {
             const rowId = generateId();
 
@@ -1548,7 +1521,6 @@
             previewBtn.classList.add('preview-btn');
             previewBtn.innerText = '👁️ 預覽';
 
-            //cardActions.appendChild(testBtn);
             cardActions.appendChild(previewBtn);
 
             rowDataObject.playAudioFn = () => {
@@ -1602,7 +1574,6 @@
             dynamicContainer.appendChild(cardDiv);
         }
 
-        // 3. 順序播放全部邏輯
         async function runSequentialPlayAll() {
             if (rowsData.length === 0) return;
 
@@ -1652,7 +1623,6 @@
             isGlobalPlaying = false;
         }
 
-        // 5. 全域停止播放邏輯
         function stopAllPlayback() {
             isGlobalPlaying = false;
 
@@ -1687,7 +1657,6 @@
         stopAllBtn.addEventListener('click', stopAllPlayback);
         focusStopBtn.addEventListener('click', stopAllPlayback);
 
-        // 4. HTML5 原生 Drag and Drop 排序
         let dragSourceElement = null;
 
         function bindDragEvents(card) {
@@ -1827,8 +1796,14 @@
 
                     if (importedData.settings) {
                         globalLoopsInput.value = importedData.settings.globalLoops || 1;
+                        loopsValue.innerText = globalLoopsInput.value;
+                        
                         globalWaitInput.value = importedData.settings.globalWait || 0;
+                        waitValue.innerText = globalWaitInput.value;
+                        
                         globalSpeedInput.value = importedData.settings.globalSpeed !== undefined ? importedData.settings.globalSpeed : 1.0;
+                        speedValue.innerText = parseFloat(globalSpeedInput.value).toFixed(1);
+                        
                         if (importedData.settings.selectedVoiceUri) {
                             selectedVoiceUri = importedData.settings.selectedVoiceUri;
                             if (globalVoiceSelect.querySelector(`option[value="${selectedVoiceUri}"]`)) {
