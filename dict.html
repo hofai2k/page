@@ -49,8 +49,8 @@
 
         /* 專注/劇場模式背景 */
         body.focus-mode-active {
-            background-color: #0f172a; 
-            overflow: hidden; 
+            background-color: #0f172a;
+            overflow: hidden;
         }
 
         .app-container {
@@ -144,22 +144,72 @@
             transition: all 0.2s ease;
         }
 
-        button:active { transform: scale(0.97); }
+        button:active {
+            transform: scale(0.97);
+        }
 
-        .add-btn { background-color: var(--success); color: white; }
-        .add-btn:hover { background-color: var(--success-hover); }
-        .add-wait-btn { background-color: #f59e0b; color: white; }
-        .add-wait-btn:hover { background-color: #d97706; }
-        .play-all-btn { background-color: var(--primary); color: white; }
-        .play-all-btn:hover { background-color: var(--primary-hover); }
-        .stop-all-btn { background-color: var(--danger); color: white; }
-        .stop-all-btn:hover { background-color: var(--danger-hover); }
-        .utility-btn { background-color: var(--utility); color: #334155; }
-        .utility-btn:hover { background-color: var(--utility-hover); }
-        .export-btn { background-color: #0ea5e9; color: white; }
-        .export-btn:hover { background-color: #0284c7; }
-        .import-btn { background-color: #64748b; color: white; }
-        .import-btn:hover { background-color: #475569; }
+        .add-btn {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .add-btn:hover {
+            background-color: var(--success-hover);
+        }
+
+        .add-wait-btn {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .add-wait-btn:hover {
+            background-color: #d97706;
+        }
+
+        .play-all-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .play-all-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .stop-all-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .stop-all-btn:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .utility-btn {
+            background-color: var(--utility);
+            color: #334155;
+        }
+
+        .utility-btn:hover {
+            background-color: var(--utility-hover);
+        }
+
+        .export-btn {
+            background-color: #0ea5e9;
+            color: white;
+        }
+
+        .export-btn:hover {
+            background-color: #0284c7;
+        }
+
+        .import-btn {
+            background-color: #64748b;
+            color: white;
+        }
+
+        .import-btn:hover {
+            background-color: #475569;
+        }
 
         /* 卡片網格 */
         .cards-grid {
@@ -243,7 +293,7 @@
 
         .image-slot {
             width: 100%;
-            height: 110px; 
+            height: 110px;
             border-radius: 12px;
             border: 2px dashed #cbd5e1;
             background: #f8fafc;
@@ -254,7 +304,7 @@
 
         .image-slot.has-image {
             border: 1px solid #e2e8f0;
-            background: #e2e8f0; 
+            background: #e2e8f0;
         }
 
         .image-slot:hover {
@@ -265,14 +315,14 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: none; 
+            display: none;
             transition: transform 0.3s;
         }
 
         .image-slot.has-image img {
             display: block;
         }
-        
+
         .image-slot.has-image:hover img {
             transform: scale(1.05);
         }
@@ -292,7 +342,7 @@
         }
 
         .image-slot.has-image .add-image-content {
-            display: none; 
+            display: none;
         }
 
         .add-image-content:hover {
@@ -308,7 +358,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             font-size: 16px;
         }
 
@@ -324,7 +374,7 @@
             height: 24px;
             font-size: 10px;
             cursor: pointer;
-            display: none; 
+            display: none;
             align-items: center;
             justify-content: center;
             opacity: 0;
@@ -385,10 +435,12 @@
             z-index: 2;
             width: 28px;
             height: 28px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        .toggle-btn:hover { background-color: #f1f5f9; }
+        .toggle-btn:hover {
+            background-color: #f1f5f9;
+        }
 
         /* 卡片底部操作鍵 */
         .card-actions {
@@ -407,19 +459,53 @@
             border-radius: 12px;
         }
 
-        .record-btn { background-color: #ffebee; color: #e53e3e; }
-        .record-btn:hover { background-color: #ffcdd2; }
-        .record-btn.recording { background-color: var(--danger); color: white; animation: blink 1.2s infinite; }
+        .record-btn {
+            background-color: #ffebee;
+            color: #e53e3e;
+        }
 
-        .play-btn { background-color: #ebf8ff; color: #2b6cb0; }
-        .play-btn:hover:not(:disabled) { background-color: #d8effd; }
-        .play-btn:disabled { background-color: #f1f5f9; color: #cbd5e1; cursor: not-allowed; }
+        .record-btn:hover {
+            background-color: #ffcdd2;
+        }
 
-        .tts-btn { background-color: #fef3c7; color: #b7791f; }
-        .tts-btn:hover { background-color: #fde68a; }
+        .record-btn.recording {
+            background-color: var(--danger);
+            color: white;
+            animation: blink 1.2s infinite;
+        }
 
-        .preview-btn { background-color: #f1f5f9; color: #475569; }
-        .preview-btn:hover { background-color: #e2e8f0; }
+        .play-btn {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .play-btn:hover:not(:disabled) {
+            background-color: #d8effd;
+        }
+
+        .play-btn:disabled {
+            background-color: #f1f5f9;
+            color: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .tts-btn {
+            background-color: #fef3c7;
+            color: #b7791f;
+        }
+
+        .tts-btn:hover {
+            background-color: #fde68a;
+        }
+
+        .preview-btn {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .preview-btn:hover {
+            background-color: #e2e8f0;
+        }
 
         .delete-btn {
             background-color: transparent;
@@ -430,7 +516,11 @@
             height: 28px;
             font-size: 12px;
         }
-        .delete-btn:hover { color: var(--danger); background-color: #fee2e2; }
+
+        .delete-btn:hover {
+            color: var(--danger);
+            background-color: #fee2e2;
+        }
 
         /* 等待卡片專屬內層樣式 */
         .wait-card-content {
@@ -465,7 +555,9 @@
             color: var(--primary);
         }
 
-        #fileInput { display: none; }
+        #fileInput {
+            display: none;
+        }
 
         /* 劇場聚焦模式 (Focus Mode) */
         .focus-overlay {
@@ -485,24 +577,27 @@
             padding: 40px;
         }
 
-        body.focus-mode-active .focus-overlay { opacity: 1; pointer-events: auto; }
+        body.focus-mode-active .focus-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-        .focus-card-slot { 
-            width: 100%; 
+        .focus-card-slot {
+            width: 100%;
             height: 100%;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
             max-width: 1400px;
         }
 
-        .focus-controls { 
+        .focus-controls {
             position: absolute;
             top: 24px;
             right: 32px;
             z-index: 10000;
         }
-        
+
         .focus-stop-btn {
             background-color: var(--danger);
             color: white;
@@ -514,7 +609,7 @@
             border: 2px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.2s, background-color 0.2s;
         }
-        
+
         .focus-stop-btn:hover {
             background-color: var(--danger-hover);
             transform: scale(1.05);
@@ -581,17 +676,17 @@
         }
 
         body.focus-mode-active .record-card.playing-now .image-slot.has-image {
-            background: rgba(0,0,0,0.2); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         body.focus-mode-active .record-card.playing-now .image-slot img {
-            object-fit: contain; 
+            object-fit: contain;
             border-radius: 20px;
         }
 
         body.focus-mode-active .record-card.playing-now .image-slot:hover img {
-            transform: none; 
+            transform: none;
         }
 
         /* 放大右側文字區塊 */
@@ -607,7 +702,7 @@
             padding: 40px;
             border-radius: 20px;
             border: 2px solid var(--border-color);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.02);
             background-color: #fafafa;
         }
 
@@ -617,10 +712,20 @@
             justify-content: center;
             gap: 40px;
         }
-        body.focus-mode-active .record-card.playing-now .wait-card-clock { font-size: 8rem; }
-        body.focus-mode-active .record-card.playing-now .wait-input-group { font-size: 2.5rem; }
+
+        body.focus-mode-active .record-card.playing-now .wait-card-clock {
+            font-size: 8rem;
+        }
+
+        body.focus-mode-active .record-card.playing-now .wait-input-group {
+            font-size: 2.5rem;
+        }
+
         body.focus-mode-active .record-card.playing-now .wait-input-group input {
-            font-size: 3rem; width: 150px; padding: 16px; border-width: 4px;
+            font-size: 3rem;
+            width: 150px;
+            padding: 16px;
+            border-width: 4px;
         }
 
         /* 小螢幕自適應 */
@@ -629,18 +734,133 @@
                 flex-direction: column;
                 overflow-y: auto;
             }
+
             body.focus-mode-active .record-card.playing-now .image-container {
                 max-width: 100%;
-                height: 40vh; 
+                height: 40vh;
             }
+
             body.focus-mode-active .record-card.playing-now textarea {
                 min-height: 400px;
                 font-size: 1.5rem;
             }
-            .focus-controls { top: 12px; right: 12px; }
+
+            .focus-controls {
+                top: 12px;
+                right: 12px;
+            }
         }
 
-        @keyframes blink { 50% { opacity: 0.6; } }
+        @keyframes blink {
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+/* Unified Compact Layout Configuration */
+.controls-header.unified-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: var(--bg-card);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+}
+
+.toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Slimmed down parameters row */
+.global-settings-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #f8fafc;
+    padding: 6px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.global-settings-panel input[type="number"] {
+    width: 48px;
+    padding: 4px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.global-voice-select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    max-width: 180px;
+}
+
+/* Hoverable CSS Dropdown System */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    z-index: 10;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.dropdown-content.right-align {
+    right: 0;
+}
+
+.dropdown-content a {
+    color: var(--text-main);
+    padding: 10px 14px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.15s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f5f9;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Button scaling adaptations */
+button {
+    padding: 8px 14px;
+    border-radius: 8px;
+}
+
     </style>
 </head>
 
@@ -655,41 +875,56 @@
 
     <div class="app-container">
         <h2>音訊與單圖文本管理器</h2>
-
-        <div class="controls-header">
-            <button type="button" class="export-btn" id="exportBtn">📥 匯出備份</button>
-            <button type="button" class="import-btn" id="triggerImportBtn">📤 匯入檔案</button>
-            <input type="file" id="fileInput" accept=".json">
-        </div>
-
-        <div class="controls-header">
-            <button type="button" class="add-btn" id="addFieldsBtn">➕ 新增文字卡片</button>
-            <button type="button" class="add-wait-btn" id="addWait10Btn">⏳ 新增等待卡 (10秒)</button>
-            <button type="button" class="add-wait-btn" id="addWait5Btn">⏳ 新增等待卡 (5秒)</button>
-            <button type="button" class="utility-btn" id="showAllBtn">👁️ 顯示全部文字</button>
-            <button type="button" class="utility-btn" id="hideAllBtn">🔒 隱藏全部文字</button>
-        </div>
-
-        <div class="controls-header">
-            <button type="button" class="play-all-btn" id="playAllBtn">▶️ 順序播放全部</button>
-            <button type="button" class="stop-all-btn" id="stopAllBtn">🛑 🛑 停止全部播放</button>
-
-            <div class="global-settings">
-                <label for="globalLoops">重複次數:</label>
-                <input type="number" id="globalLoops" min="1" max="10" value="1">
-
-                <label for="globalWait" style="margin-left: 5px;">播放間隔 (秒):</label>
-                <input type="number" id="globalWait" min="0" max="30" value="0">
-
-                <label for="globalSpeed" style="margin-left: 5px;">⚡ 語速:</label>
-                <input type="number" id="globalSpeed" min="0.5" max="3.0" step="0.1" value="1.0">
-
-                <label for="globalVoiceSelect" style="margin-left: 5px;">🗣️ 朗讀語音:</label>
-                <select id="globalVoiceSelect" class="global-voice-select">
-                    <option value="">載入系統語音中...</option>
-                </select>
+<div class="controls-header unified-toolbar">
+    <div class="toolbar-section">
+        <button type="button" class="play-all-btn" id="playAllBtn">▶️ 播放全部</button>
+        <button type="button" class="stop-all-btn" id="stopAllBtn">🛑 停止</button>
+        
+        <div class="dropdown">
+            <button type="button" class="add-btn dropdown-toggle">➕ 新增卡片</button>
+            <div class="dropdown-content">
+                <a href="#" id="addFieldsBtn">📝 文字卡片</a>
+                <a href="#" id="addWait5Btn">⏳ 等待卡 (5秒)</a>
+                <a href="#" id="addWait10Btn">⏳ 等待卡 (10秒)</a>
             </div>
         </div>
+    </div>
+
+    <div class="global-settings-panel">
+        <div class="setting-item">
+            <label for="globalLoops">重複:</label>
+            <input type="number" id="globalLoops" min="1" max="10" value="1">次
+        </div>
+        <div class="setting-item">
+            <label for="globalWait">間隔:</label>
+            <input type="number" id="globalWait" min="0" max="30" value="0">秒
+        </div>
+        <div class="setting-item">
+            <label for="globalSpeed">⚡語速:</label>
+            <input type="number" id="globalSpeed" min="0.5" max="3.0" step="0.1" value="1.0">
+        </div>
+        <div class="setting-item">
+            <label for="globalVoiceSelect">🗣️語音:</label>
+            <select id="globalVoiceSelect" class="global-voice-select">
+                <option value="">載入中...</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="toolbar-section utility-section">
+        <div class="dropdown utility-dropdown">
+            <button type="button" class="utility-btn dropdown-toggle">🛠️ 工具箱</button>
+            <div class="dropdown-content right-align">
+                <a href="#" id="showAllBtn">👁️ 顯示全部文字</a>
+                <a href="#" id="hideAllBtn">🔒 隱藏全部文字</a>
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 4px 0;">
+                <a href="#" id="exportBtn">📥 匯出備份</a>
+                <a href="#" id="triggerImportBtn">📤 匯入檔案</a>
+            </div>
+        </div>
+        <input type="file" id="fileInput" accept=".json">
+    </div>
+</div>
 
         <div class="cards-grid" id="dynamicContainer"></div>
     </div>
@@ -717,12 +952,12 @@
 
         let rowsData = [];
         let cardSequenceCounter = 0;
-        let isGlobalPlaying = false; 
-        let currentActiveAudio = null; 
-        let currentWaitInterval = null; 
-        let selectedCardId = null; 
-        let lastFocusedCardElement = null; 
-        
+        let isGlobalPlaying = false;
+        let currentActiveAudio = null;
+        let currentWaitInterval = null;
+        let selectedCardId = null;
+        let lastFocusedCardElement = null;
+
         let systemVoices = [];
         let selectedVoiceUri = "";
 
@@ -748,9 +983,9 @@
                 const nameLower = voice.name.toLowerCase();
                 const langLower = voice.lang.toLowerCase();
                 return nameLower.includes('hk') || langLower.includes('hk') ||
-                       nameLower.includes('tw') || langLower.includes('tw') ||
-                       nameLower.includes('zh') || langLower.includes('zh') ||
-                       nameLower.includes('cn') || langLower.includes('cn');
+                    nameLower.includes('tw') || langLower.includes('tw') ||
+                    nameLower.includes('zh') || langLower.includes('zh') ||
+                    nameLower.includes('cn') || langLower.includes('cn');
             });
 
             globalVoiceSelect.innerHTML = '';
@@ -767,7 +1002,7 @@
                 const option = document.createElement('option');
                 option.value = voice.voiceURI;
                 option.innerText = `${voice.name} (${voice.lang})`;
-                
+
                 if (!selectedVoiceUri && (voice.lang === 'zh-HK' || voice.lang.includes('HK'))) {
                     option.selected = true;
                     selectedVoiceUri = voice.voiceURI;
@@ -797,7 +1032,7 @@
                 lastFocusedCardElement.classList.remove('playing-now');
                 returnCardToOriginalGrid(lastFocusedCardElement);
             }
-            focusCardSlot.innerHTML = ""; 
+            focusCardSlot.innerHTML = "";
             focusCardSlot.appendChild(cardElement);
             lastFocusedCardElement = cardElement;
         }
@@ -824,11 +1059,11 @@
         function setupCardSelection(cardDiv, id) {
             cardDiv.addEventListener('click', (e) => {
                 if (document.body.classList.contains('focus-mode-active')) return;
-                
+
                 if (e.target.closest('.card-actions') || e.target.closest('.image-container') || e.target.classList.contains('delete-btn')) {
-                    return; 
+                    return;
                 }
-                
+
                 document.querySelectorAll('.record-card').forEach(card => {
                     card.classList.remove('selected-card');
                 });
@@ -861,7 +1096,7 @@
                 type: 'audio_text',
                 textValue: initialText,
                 audioBase64: initialAudioBase64,
-                images: safeImageArray, 
+                images: safeImageArray,
                 colorIndex: colorIndex,
                 domElement: null,
                 playAudioFn: null
@@ -926,6 +1161,7 @@
             addContent.onclick = () => imageInput.click();
 
             const previewImg = document.createElement('img');
+            previewImg.loading = 'lazy'; // <-- Add this line
 
             const imgDelBtn = document.createElement('button');
             imgDelBtn.type = 'button';
@@ -941,18 +1177,58 @@
 
             imageInput.onchange = (e) => {
                 const file = e.target.files[0];
-                if(!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    rowDataObject.images = [event.target.result];
+                if (!file) return;
+
+                // Create an image object to read the file's natural dimensions
+                const img = new Image();
+
+                img.onload = () => {
+                    const MAX_DIMENSION = 1000;
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Calculate new dimensions while maintaining aspect ratio
+                    if (width > height) {
+                        if (width > MAX_DIMENSION) {
+                            height *= MAX_DIMENSION / width;
+                            width = MAX_DIMENSION;
+                        }
+                    } else {
+                        if (height > MAX_DIMENSION) {
+                            width *= MAX_DIMENSION / height;
+                            height = MAX_DIMENSION;
+                        }
+                    }
+
+                    // Create a canvas to draw and compress the image
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+
+                    // Draw the image onto the canvas at the new dimensions
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert the canvas to a base64 string (JPEG format at 80% quality)
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.80);
+
+                    // Save to your data object and render
+                    rowDataObject.images = [compressedBase64];
                     renderImageState();
                 };
-                reader.readAsDataURL(file);
-                imageInput.value = ''; 
-            };
 
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    // Trigger the image load event
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                // Reset the input so the same file can be uploaded again if needed
+                imageInput.value = '';
+            };
             imgDelBtn.onclick = (e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 rowDataObject.images = [];
                 renderImageState();
             };
@@ -961,7 +1237,7 @@
                 if (rowDataObject.images && rowDataObject.images.length > 0) {
                     previewImg.src = rowDataObject.images[0];
                     imageSlot.classList.add('has-image');
-                    cardDiv.classList.add('has-img'); 
+                    cardDiv.classList.add('has-img');
                 } else {
                     previewImg.src = '';
                     imageSlot.classList.remove('has-image');
@@ -978,8 +1254,8 @@
             const textareaInput = document.createElement('textarea');
             textareaInput.classList.add('masked-active');
             textareaInput.value = initialText;
-            textareaInput.placeholder = '請輸入備忘或文字內容...';
-            
+            //textareaInput.placeholder = '請輸入備忘或文字內容...';
+
             textareaInput.addEventListener('input', (e) => {
                 rowDataObject.textValue = e.target.value;
             });
@@ -1072,7 +1348,7 @@
                     let currentLoop = 0;
 
                     const handleLoopDelay = (nextInstanceFn) => {
-                        if (!isGlobalPlaying) return resolve(); 
+                        if (!isGlobalPlaying) return resolve();
                         currentLoop++;
 
                         if (currentLoop < targetLoops) {
@@ -1120,13 +1396,13 @@
             };
 
             playBtn.onclick = () => {
-                stopAllPlayback(); 
+                stopAllPlayback();
                 isGlobalPlaying = true;
-                
+
                 document.body.classList.add('focus-mode-active');
                 cardDiv.classList.add('playing-now');
                 moveCardToFocus(cardDiv);
-                
+
                 rowDataObject.playAudioFn().then(() => {
                     returnAllCardsFromFocus();
                     document.body.classList.remove('focus-mode-active');
@@ -1276,7 +1552,7 @@
                 return new Promise((resolve) => {
                     let remaining = rowDataObject.waitSeconds;
                     testBtn.innerText = `⏳ 等待中 (${remaining}s)`;
-                    
+
                     currentWaitInterval = setInterval(() => {
                         if (!isGlobalPlaying) {
                             clearInterval(currentWaitInterval);
@@ -1298,7 +1574,7 @@
             testBtn.onclick = () => {
                 stopAllPlayback();
                 isGlobalPlaying = true;
-                
+
                 document.body.classList.add('focus-mode-active');
                 cardDiv.classList.add('playing-now');
                 moveCardToFocus(cardDiv);
@@ -1326,8 +1602,8 @@
         // 3. 順序播放全部邏輯
         async function runSequentialPlayAll() {
             if (rowsData.length === 0) return;
-            
-            stopAllPlayback(); 
+
+            stopAllPlayback();
             isGlobalPlaying = true;
             playAllBtn.disabled = true;
 
@@ -1344,7 +1620,7 @@
             }
 
             for (let i = startIndex; i < rowsData.length; i++) {
-                if (!isGlobalPlaying) break; 
+                if (!isGlobalPlaying) break;
 
                 const targetRow = rowsData[i];
 
@@ -1376,7 +1652,7 @@
         // 5. 全域停止播放邏輯
         function stopAllPlayback() {
             isGlobalPlaying = false;
-            
+
             if (currentActiveAudio) {
                 currentActiveAudio.pause();
                 currentActiveAudio = null;
@@ -1427,7 +1703,7 @@
 
         function handleDragOver(e) {
             if (e.preventDefault) {
-                e.preventDefault(); 
+                e.preventDefault();
             }
             return false;
         }
@@ -1459,12 +1735,12 @@
         function reorderRowsDataArray() {
             const currentDomIds = Array.from(dynamicContainer.children).map(card => card.dataset.id);
             const newRowsData = [];
-            
+
             currentDomIds.forEach(id => {
                 const found = rowsData.find(r => r.id === id);
                 if (found) newRowsData.push(found);
             });
-            
+
             rowsData = newRowsData;
         }
 
@@ -1510,12 +1786,12 @@
                     if (item.type === 'wait_timer') {
                         return { type: 'wait_timer', waitSeconds: item.waitSeconds };
                     } else {
-                        return { 
-                            type: 'audio_text', 
-                            text: item.textValue, 
-                            audio: item.audioBase64, 
+                        return {
+                            type: 'audio_text',
+                            text: item.textValue,
+                            audio: item.audioBase64,
                             images: item.images,
-                            colorIndex: item.colorIndex 
+                            colorIndex: item.colorIndex
                         };
                     }
                 })
