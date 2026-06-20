@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音訊與索引卡管理器</title>
     <style>
+        @font-face {
+            font-family: 'b8AR4';
+            /* This is the name you will use to reference it */
+            src: url('fonts/kaiu.woff2') format('woff2'),
+                url('fonts/kaiu.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+
         :root {
             --bg-app: #f1f5f9;
             --bg-card: #ffffff;
@@ -39,7 +49,10 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+
+            font-family: 'b8AR4', sans-serif;
+
             background-color: var(--bg-app);
             color: var(--text-main);
             padding: 40px 20px;
@@ -125,17 +138,41 @@
         }
 
         /* 模擬主動控制按鈕外觀 */
-        .tab-panel-btn.btn-add-text { color: white; background-color: var(--success); }
-        .tab-panel-btn.btn-add-text:hover { background-color: var(--success-hover); }
-        
-        .tab-panel-btn.btn-add-wait { color: #b7791f; background-color: #fef3c7; }
-        .tab-panel-btn.btn-add-wait:hover { background-color: #fde68a; }
+        .tab-panel-btn.btn-add-text {
+            color: white;
+            background-color: var(--success);
+        }
 
-        .tab-panel-btn.btn-utility { color: #334155; background-color: #e2e8f0; }
-        .tab-panel-btn.btn-utility:hover { background-color: #cbd5e1; }
+        .tab-panel-btn.btn-add-text:hover {
+            background-color: var(--success-hover);
+        }
 
-        .tab-panel-btn.btn-accent { color: white; background-color: var(--accent); }
-        .tab-panel-btn.btn-accent:hover { background-color: var(--accent-hover); }
+        .tab-panel-btn.btn-add-wait {
+            color: #b7791f;
+            background-color: #fef3c7;
+        }
+
+        .tab-panel-btn.btn-add-wait:hover {
+            background-color: #fde68a;
+        }
+
+        .tab-panel-btn.btn-utility {
+            color: #334155;
+            background-color: #e2e8f0;
+        }
+
+        .tab-panel-btn.btn-utility:hover {
+            background-color: #cbd5e1;
+        }
+
+        .tab-panel-btn.btn-accent {
+            color: white;
+            background-color: var(--accent);
+        }
+
+        .tab-panel-btn.btn-accent:hover {
+            background-color: var(--accent-hover);
+        }
 
         .action-playback-group {
             display: flex;
@@ -413,7 +450,7 @@
             padding: 12px 38px 12px 12px;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            font-family: ui-monospace, monospace;
+
             font-size: 0.9rem;
             color: var(--text-main);
             background-color: #f8fafc;
@@ -773,9 +810,9 @@
 
     <div class="app-container">
         <h2>音訊與索引卡管理器</h2>
-        
+
         <div class="controls-header unified-toolbar">
-            
+
             <div class="toolbar-row">
                 <div class="tab-panel-group">
                     <button type="button" class="tab-panel-btn btn-add-text" id="addFieldsBtn">📝 新增文字卡片</button>
@@ -791,7 +828,9 @@
 
             <div class="toolbar-row">
                 <div class="tab-panel-group" style="width: 100%; justify-content: flex-start; background: #e2e8f0;">
-                    <span style="font-size: 0.8rem; font-weight: 800; color: #475569; padding: 8px 4px 8px 10px; display: inline-flex; align-items: center;">🛠️ 工具箱:</span>
+                    <span
+                        style="font-size: 0.8rem; font-weight: 800; color: #475569; padding: 8px 4px 8px 10px; display: inline-flex; align-items: center;">🛠️
+                        工具箱:</span>
                     <button type="button" class="tab-panel-btn btn-utility" id="showAllBtn">👁️ 顯示全部文字</button>
                     <button type="button" class="tab-panel-btn btn-utility" id="hideAllBtn">🔒 隱藏全部文字</button>
                     <button type="button" class="tab-panel-btn btn-accent" id="exportBtn">📥 匯出備份</button>
@@ -837,11 +876,11 @@
         const stopAllBtn = document.getElementById('stopAllBtn');
         const showAllBtn = document.getElementById('showAllBtn');
         const hideAllBtn = document.getElementById('hideAllBtn');
-        
+
         const globalLoopsInput = document.getElementById('globalLoops');
         const globalWaitInput = document.getElementById('globalWait');
         const globalSpeedInput = document.getElementById('globalSpeed');
-        
+
         const loopsValue = document.getElementById('loopsValue');
         const waitValue = document.getElementById('waitValue');
         const speedValue = document.getElementById('speedValue');
@@ -1710,13 +1749,13 @@
                     if (importedData.settings) {
                         globalLoopsInput.value = importedData.settings.globalLoops || 1;
                         loopsValue.innerText = globalLoopsInput.value;
-                        
+
                         globalWaitInput.value = importedData.settings.globalWait || 0;
                         waitValue.innerText = globalWaitInput.value;
-                        
+
                         globalSpeedInput.value = importedData.settings.globalSpeed !== undefined ? importedData.settings.globalSpeed : 1.0;
                         speedValue.innerText = parseFloat(globalSpeedInput.value).toFixed(1);
-                        
+
                         if (importedData.settings.selectedVoiceUri) {
                             selectedVoiceUri = importedData.settings.selectedVoiceUri;
                             if (globalVoiceSelect.querySelector(`option[value="${selectedVoiceUri}"]`)) {

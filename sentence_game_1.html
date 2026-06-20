@@ -12,21 +12,31 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
+
+        
+        @font-face {
+            font-family: 'b8AR4';
+            /* This is the name you will use to reference it */
+            src: url('fonts/kaiu.woff2') format('woff2'),
+                url('fonts/kaiu.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         :root {
             --bg-image: url('Gemini_Generated_Image_2g1m8a2g1m8a2g1m.png');
         }
 
         body {
+
+            font-family: 'b8AR4', sans-serif;
             /*font-family: 'DFKai-SB', 'BiauKai', '標楷體-繁', 'BiauKaiTC-Regular', '標楷體', 'Kaiti', 'Fredoka One', 'Noto Sans TC', sans-serif;*/
             /*font-family: 'BiauKaiTC-Regular', 'Kaiti TC', 'DFKai-SB', 'BiauKai', '標楷體-繁', '標楷體', 'Kaiti', 'Fredoka One', 'Noto Sans TC', sans-serif;*/
-            font-family:
+            /*font-family:
                 'BiauKaiTC-Regular', 'Kaiti TC',
-                /* For Macs & iPads that happen to have it downloaded */
                 'DFKai-SB', '標楷體',
-                /* For Windows PC users */
                 'Noto Serif TC',
-                /* The bulletproof backup for all other iPads/iPhones */
-                serif;
+                serif;*/
 
             background-image: var(--bg-image);
             background-color: #5c8f24;
