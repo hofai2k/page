@@ -20,8 +20,10 @@
             --success-hover: #059669;
             --danger: #ef4444;
             --danger-hover: #dc2626;
-            --utility: #e2e8f0;
-            --utility-hover: #cbd5e1;
+            --utility: #64748b;
+            --utility-hover: #475569;
+            --accent: #0ea5e9;
+            --accent-hover: #0284c7;
 
             /* Feedback States */
             --playing-border: #6366f1;
@@ -73,43 +75,120 @@
             letter-spacing: -0.025em;
         }
 
-        /* 頂部工具列 */
-        .controls-header {
+        /* 頂部整合型工具列 */
+        .controls-header.unified-toolbar {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
+            flex-direction: column;
+            gap: 16px;
             background: var(--bg-card);
-            padding: 18px 24px;
+            padding: 20px;
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             margin-bottom: 24px;
             border: 1px solid #e2e8f0;
+            width: 100%;
         }
 
-        .global-settings {
+        /* 頁籤控制組面板 */
+        .toolbar-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .tab-panel-group {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+
+        .tab-panel-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 8px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .tab-panel-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* 模擬主動控制按鈕外觀 */
+        .tab-panel-btn.btn-add-text { color: white; background-color: var(--success); }
+        .tab-panel-btn.btn-add-text:hover { background-color: var(--success-hover); }
+        
+        .tab-panel-btn.btn-add-wait { color: #b7791f; background-color: #fef3c7; }
+        .tab-panel-btn.btn-add-wait:hover { background-color: #fde68a; }
+
+        .tab-panel-btn.btn-utility { color: #334155; background-color: #e2e8f0; }
+        .tab-panel-btn.btn-utility:hover { background-color: #cbd5e1; }
+
+        .tab-panel-btn.btn-accent { color: white; background-color: var(--accent); }
+        .tab-panel-btn.btn-accent:hover { background-color: var(--accent-hover); }
+
+        .action-playback-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 屬性設定面板 */
+        .global-settings-panel {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+
+        .setting-item {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-main);
-            background: #f8fafc;
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            gap: 6px;
         }
 
-        .global-settings label {
-            color: var(--text-muted);
-        }
-
-        /* 屬性設定與按鈕 */
-        button {
-            padding: 10px 16px;
+        .global-settings-panel input[type="range"] {
+            width: 90px;
             cursor: pointer;
-            border-radius: 10px;
+        }
+
+        .value-display {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 24px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .global-voice-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            max-width: 180px;
+            border: 1px solid #cbd5e1;
+            background: white;
+        }
+
+        /* 通用按鈕樣式 */
+        button {
+            padding: 8px 14px;
+            cursor: pointer;
+            border-radius: 8px;
             border: none;
             font-size: 0.875rem;
             font-weight: 700;
@@ -122,24 +201,6 @@
 
         button:active {
             transform: scale(0.97);
-        }
-
-        .add-btn {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .add-btn:hover {
-            background-color: var(--success-hover);
-        }
-
-        .add-wait-btn {
-            background-color: #f59e0b;
-            color: white;
-        }
-
-        .add-wait-btn:hover {
-            background-color: #d97706;
         }
 
         .play-all-btn {
@@ -158,33 +219,6 @@
 
         .stop-all-btn:hover {
             background-color: var(--danger-hover);
-        }
-
-        .utility-btn {
-            background-color: var(--utility);
-            color: #334155;
-        }
-
-        .utility-btn:hover {
-            background-color: var(--utility-hover);
-        }
-
-        .export-btn {
-            background-color: #0ea5e9;
-            color: white;
-        }
-
-        .export-btn:hover {
-            background-color: #0284c7;
-        }
-
-        .import-btn {
-            background-color: #64748b;
-            color: white;
-        }
-
-        .import-btn:hover {
-            background-color: #475569;
         }
 
         /* 卡片網格 */
@@ -249,7 +283,7 @@
             font-size: 1.1rem;
         }
 
-        /* 卡片主體: 單圖 (左) + 文字 (右) 的佈局 */
+        /* 卡片主體 */
         .card-body {
             padding: 16px;
             display: flex;
@@ -605,7 +639,6 @@
             border-radius: 24px;
         }
 
-        /* 隱藏非必要的編輯控制項 */
         body.focus-mode-active .record-card.playing-now .card-header .grip,
         body.focus-mode-active .record-card.playing-now .card-header .delete-btn,
         body.focus-mode-active .record-card.playing-now .image-delete-btn,
@@ -614,12 +647,10 @@
             display: none !important;
         }
 
-        /* 鎖定新增圖片按鈕，防止誤觸 */
         body.focus-mode-active .record-card.playing-now .add-image-content {
             pointer-events: none;
         }
 
-        /* 卡片主體 - 根據有無圖片靈活排版 */
         body.focus-mode-active .record-card.playing-now .card-body {
             flex-direction: row;
             gap: 40px;
@@ -628,7 +659,6 @@
             flex-grow: 1;
         }
 
-        /* 若該卡片「沒有上傳圖片」，隱藏左側區塊，讓文字滿版置中 */
         body.focus-mode-active .record-card.playing-now:not(.has-img) .image-container {
             display: none;
         }
@@ -665,7 +695,6 @@
             transform: none;
         }
 
-        /* 放大右側文字區塊 */
         body.focus-mode-active .record-card.playing-now .input-wrapper {
             flex: 1.2;
             height: 100%;
@@ -682,7 +711,6 @@
             background-color: #fafafa;
         }
 
-        /* 等待卡片(Wait Card) Focus Mode */
         body.focus-mode-active .record-card.playing-now .wait-card-content {
             height: 100%;
             justify-content: center;
@@ -704,7 +732,6 @@
             border-width: 4px;
         }
 
-        /* 小螢幕自適應 */
         @media (max-width: 900px) {
             body.focus-mode-active .record-card.playing-now .card-body {
                 flex-direction: column;
@@ -732,114 +759,6 @@
                 opacity: 0.6;
             }
         }
-
-        /* Unified Compact Layout Configuration */
-        .controls-header.unified-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            padding: 12px 20px;
-            background: var(--bg-card);
-            border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            margin-bottom: 24px;
-            border: 1px solid #e2e8f0;
-            width: 100%;
-        }
-
-        .toolbar-section {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Slimmed down parameters row */
-        .global-settings-panel {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 14px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background: #f8fafc;
-            padding: 6px 14px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .setting-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .global-settings-panel input[type="range"] {
-            width: 90px;
-            cursor: pointer;
-        }
-
-        .value-display {
-            font-weight: 700;
-            color: var(--primary);
-            min-width: 24px;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .global-voice-select {
-            padding: 4px 8px;
-            border-radius: 6px;
-            max-width: 180px;
-        }
-
-        /* Hoverable CSS Dropdown System */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #ffffff;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            z-index: 10;
-            margin-top: 4px;
-            overflow: hidden;
-        }
-
-        .dropdown-content.right-align {
-            right: 0;
-        }
-
-        .dropdown-content a {
-            color: var(--text-main);
-            padding: 10px 14px;
-            text-decoration: none;
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: background 0.15s;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f5f9;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        /* Button scaling adaptations */
-        button {
-            padding: 8px 14px;
-            border-radius: 8px;
-        }
     </style>
 </head>
 
@@ -854,23 +773,31 @@
 
     <div class="app-container">
         <h2>音訊與單圖文本管理器</h2>
+        
         <div class="controls-header unified-toolbar">
-            <div class="toolbar-section">
-
-
-                <div class="dropdown">
-                    <button type="button" class="add-btn dropdown-toggle">➕ 新增卡片</button>
-                    <div class="dropdown-content">
-                        <a href="#" id="addFieldsBtn">📝 文字卡片</a>
-                        <a href="#" id="addWait5Btn">⏳ 等待卡 (5秒)</a>
-                        <a href="#" id="addWait10Btn">⏳ 等待卡 (10秒)</a>
-                    </div>
+            
+            <div class="toolbar-row">
+                <div class="tab-panel-group">
+                    <button type="button" class="tab-panel-btn btn-add-text" id="addFieldsBtn">📝 新增文字卡片</button>
+                    <button type="button" class="tab-panel-btn btn-add-wait" id="addWait5Btn">⏳ 等待卡 (5秒)</button>
+                    <button type="button" class="tab-panel-btn btn-add-wait" id="addWait10Btn">⏳ 等待卡 (10秒)</button>
                 </div>
 
-                <button type="button" class="play-all-btn" id="playAllBtn">▶️ 播放全部</button>
-                <button type="button" class="stop-all-btn" id="stopAllBtn">🛑 停止</button>
+                <div class="action-playback-group">
+                    <button type="button" class="play-all-btn" id="playAllBtn">▶️ 播放全部</button>
+                    <button type="button" class="stop-all-btn" id="stopAllBtn">🛑 停止</button>
+                </div>
+            </div>
 
-
+            <div class="toolbar-row">
+                <div class="tab-panel-group" style="width: 100%; justify-content: flex-start; background: #e2e8f0;">
+                    <span style="font-size: 0.8rem; font-weight: 800; color: #475569; padding: 8px 4px 8px 10px; display: inline-flex; align-items: center;">🛠️ 工具箱:</span>
+                    <button type="button" class="tab-panel-btn btn-utility" id="showAllBtn">👁️ 顯示全部文字</button>
+                    <button type="button" class="tab-panel-btn btn-utility" id="hideAllBtn">🔒 隱藏全部文字</button>
+                    <button type="button" class="tab-panel-btn btn-accent" id="exportBtn">📥 匯出備份</button>
+                    <button type="button" class="tab-panel-btn btn-accent" id="triggerImportBtn">📤 匯入檔案</button>
+                </div>
+                <input type="file" id="fileInput" accept=".json">
             </div>
 
             <div class="global-settings-panel">
@@ -897,19 +824,6 @@
                 </div>
             </div>
 
-            <div class="toolbar-section utility-section">
-                <div class="dropdown utility-dropdown">
-                    <button type="button" class="utility-btn dropdown-toggle">🛠️ 工具箱</button>
-                    <div class="dropdown-content right-align">
-                        <a href="#" id="showAllBtn">👁️ 顯示全部文字</a>
-                        <a href="#" id="hideAllBtn">🔒 隱藏全部文字</a>
-                        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 4px 0;">
-                        <a href="#" id="exportBtn">📥 匯出備份</a>
-                        <a href="#" id="triggerImportBtn">📤 匯入檔案</a>
-                    </div>
-                </div>
-                <input type="file" id="fileInput" accept=".json">
-            </div>
         </div>
 
         <div class="cards-grid" id="dynamicContainer"></div>
@@ -966,7 +880,6 @@
 
         const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
 
-        // 同步顯示滑桿數值
         globalLoopsInput.addEventListener('input', (e) => loopsValue.innerText = e.target.value);
         globalWaitInput.addEventListener('input', (e) => waitValue.innerText = e.target.value);
         globalSpeedInput.addEventListener('input', (e) => speedValue.innerText = parseFloat(e.target.value).toFixed(1));
