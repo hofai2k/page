@@ -49,10 +49,7 @@
         }
 
         body {
-
-
             font-family: 'b8AR4', sans-serif;
-
             background-color: var(--bg-app);
             color: var(--text-main);
             padding: 40px 20px;
@@ -60,6 +57,11 @@
             flex-direction: column;
             align-items: center;
             transition: background-color 0.3s ease;
+        }
+
+        /* Forces inputs, textareas, selections, and buttons to use the custom font globally */
+        input, textarea, button, select, option {
+            font-family: 'b8AR4', sans-serif !important;
         }
 
         /* 專注/劇場模式背景 */
@@ -450,7 +452,6 @@
             padding: 12px 38px 12px 12px;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-
             font-size: 0.9rem;
             color: var(--text-main);
             background-color: #f8fafc;
