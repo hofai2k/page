@@ -551,7 +551,8 @@
             grid.innerHTML = '';
             availableWords.forEach((word, idx) => {
                 const card = document.createElement('div');
-                card.className = "bg-white border-4 border-[#73d13d] rounded-xl h-[60px] flex items-center justify-center font-black cursor-pointer shadow-sm hover:-translate-y-1 hover:shadow-[0_4px_0_#4a3525] active:translate-y-0 active:shadow-none transition-all";
+                // Updated text size to text-2xl and increased container height to h-[80px] to match the 1.5x scale nicely
+                card.className = "bg-white border-4 border-[#73d13d] rounded-xl h-[80px] flex items-center justify-center font-black text-2xl cursor-pointer shadow-sm hover:-translate-y-1 hover:shadow-[0_4px_0_#4a3525] active:translate-y-0 active:shadow-none transition-all";
                 card.textContent = word;
                 card.onclick = () => {
                     AudioManager.playClick();
@@ -564,7 +565,8 @@
             zone.innerHTML = '';
             selectedWords.forEach((word, idx) => {
                 const badge = document.createElement('div');
-                badge.className = "bg-yellow-300 text-[#4a3525] border-2 border-[#4a3525] px-4 py-2 rounded-lg cursor-pointer font-black shadow-sm hover:-translate-y-1 transition-transform";
+                // Updated text size here to text-2xl as well for uniformity when selected
+                badge.className = "bg-yellow-300 text-[#4a3525] border-2 border-[#4a3525] px-4 py-2 rounded-lg cursor-pointer font-black text-2xl shadow-sm hover:-translate-y-1 transition-transform";
                 badge.textContent = word;
                 badge.onclick = () => {
                     AudioManager.playClick();
