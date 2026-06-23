@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 
 <head>
     <meta charset="UTF-8">
@@ -8,85 +8,180 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>URL Content Parser & Sender</title>
+    <title>網址內容解析與傳送器</title>
     <style>
+        /* 現代感淺色調風格 (Light Mode) */
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --border-color: #cccccc;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, "Microsoft JhengHei";
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            max-width: 650px;
             margin: 40px auto;
             padding: 20px;
-            background-color: #f9f9f9;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #222;
+            text-align: center;
+            font-size: 24px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
+            font-size: 15px;
         }
 
-        input[type="url"],
-        textarea {
+        /* 可輸入與選擇的 Combobox 容器設計 */
+        .combo-container {
+            position: relative;
+            display: flex;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
+        }
+
+        .combo-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .combo-select {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 35px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            /* 隱藏預設樣式，只留下拉箭頭 */
+            color: #666;
         }
 
         textarea {
-            height: 250px;
-            resize: vertical;
-            font-family: monospace;
+            width: 100%;
+            height: 220px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
             font-size: 13px;
+            background-color: #fafafa;
+            resize: vertical;
+        }
+
+        .btn-block {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
         }
 
         button {
-            padding: 10px 20px;
-            background-color: #007bff;
+            flex: 1;
+            padding: 12px 20px;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        #parseBtn {
+            background-color: var(--primary-color);
+        }
+
+        #parseBtn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #startBtn {
+            background-color: var(--success-color);
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+        }
+
+        #startBtn:hover {
+            background-color: #218838;
         }
 
         .status {
-            margin-top: 10px;
+            margin-top: 15px;
             font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 4px;
         }
     </style>
 </head>
 
 <body>
 
-    <h2>URL Content Parser</h2>
+    <div class="container">
+        <h2>URL 內容解析與傳送器</h2>
 
-    <div class="form-group">
-        <label for="urlInput">Enter URL:</label>
-        <input type="url" id="urlInput" placeholder="Enter URL here"
-            value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">
-        <button id="parseBtn" style="margin-top: 10px;">Parse Button</button>
+        <div class="form-group">
+            <label for="urlInput">請選擇或輸入試算表網址：</label>
+            <div class="combo-container">
+                <input type="url" id="urlInput" class="combo-input" placeholder="請選擇下方選項或貼上 Google 試算表網址" list="urlOptions"
+                    value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">
+                <datalist id="urlOptions">
+                    <option value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">測試用問題</option>
+
+                      <option value="https://docs.google.com/spreadsheets/d/1zA8KnNU28k84sCT2Pk7PqJHMEoGjj9SktVLTG_fbllI">問題1</option>
+
+
+                    
+                </datalist>
+            </div>
+            <div class="btn-block">
+                <button id="parseBtn">解析網址內容</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="contentArea">解析出來的內容 (CSV)：</label>
+            <textarea id="contentArea" placeholder="解析後的內容將會顯示在這裡..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <button id="startBtn">開始遊戲</button>
+        </div>
+
+        <div id="statusMessage" class="status"></div>
     </div>
-
-    <div class="form-group">
-        <label for="contentArea">URL Content:</label>
-        <textarea id="contentArea" placeholder="Parsed content will appear here...">
-        </textarea>
-    </div>
-
-    <div class="form-group">
-        <button id="startBtn">Start</button>
-    </div>
-
-    <div id="statusMessage" class="status"></div>
 
     <script>
         const urlInput = document.getElementById('urlInput');
@@ -95,8 +190,7 @@
         const startBtn = document.getElementById('startBtn');
         const statusMessage = document.getElementById('statusMessage');
 
-        // 1. Parse Button Logic (Optimized for Google Sheets / External URLs)
-        // 1. Parse Button Logic (Optimized for Google Sheets / External URLs)
+        // 1. 解析按鈕邏輯
         parseBtn.addEventListener('click', async () => {
             var targetUrl = urlInput.value.trim();
 
@@ -105,7 +199,7 @@
             }
 
             if (!targetUrl) {
-                alert('Please enter a valid URL.');
+                alert('請輸入或選擇有效的 Google 試算表網址。');
                 return;
             }
 
@@ -113,70 +207,70 @@
                 targetUrl = targetUrl.slice(0, -1);
             }
 
+            // 移除 /edit 及其後面的所有參數
             targetUrl = targetUrl.replace(/\/edit.*$/, "");
 
             if (!targetUrl.endsWith("/")) {
                 targetUrl += "/export?format=csv&gid=0";
             }
 
-            // --- FIX: Add a unique timestamp parameter to bypass proxy caching ---
+            // 新增唯一時間戳記以跳過代理快取
             const cacheBuster = `&_t=${Date.now()}`;
             const uniqueTargetUrl = targetUrl + cacheBuster;
 
-            statusMessage.style.color = 'blue';
-            statusMessage.textContent = 'Fetching content...';
+            statusMessage.style.backgroundColor = '#e6f2ff';
+            statusMessage.style.color = '#004085';
+            statusMessage.textContent = '正在獲取內容，請稍候...';
             contentArea.value = '';
 
             try {
-                // Pass the unique URL to the proxy
                 const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(uniqueTargetUrl)}`;
-
-                // --- FIX: Added { cache: "no-store" } to bypass browser caching ---
                 const response = await fetch(proxyUrl, { cache: "no-store" });
 
-                if (!response.ok) throw new Error('Network response was not ok.');
+                if (!response.ok) throw new Error('網路連線回應錯誤。');
 
                 const data = await response.text();
 
                 if (!data || data.includes("<!DOCTYPE html>") && targetUrl.includes("format=csv")) {
-                    throw new Error("Google blocked the proxy or sheet is not shared publicly.");
+                    throw new Error("Google 封鎖了代理伺服器，或該試算表未開啟公開分享。");
                 }
 
                 contentArea.value = data;
-                statusMessage.style.color = 'green';
-                statusMessage.textContent = 'Content parsed successfully!';
+                statusMessage.style.backgroundColor = '#d4edda';
+                statusMessage.style.color = '#155724';
+                statusMessage.textContent = '內容解析成功！';
             } catch (error) {
                 console.error(error);
-                statusMessage.style.color = 'red';
-                statusMessage.textContent = 'Failed to fetch. CRITICAL: Make sure your Google Sheet is set to "Anyone with the link can view" or it cannot be parsed!';
+                statusMessage.style.backgroundColor = '#f8d7da';
+                statusMessage.style.color = '#721c24';
+                statusMessage.textContent = '獲取失敗。關鍵原因：請確保您的 Google 試算表已設定為「知道連結的任何人都可以檢視」，否則無法成功解析！';
             }
         });
-        // 2. Start Button Logic (POST textarea data)
-        // 2. Start Button Logic (Forward data via URL query parameter)
+
+        // 2. 開始按鈕邏輯 (將資料轉發至遊戲網頁)
         startBtn.addEventListener('click', () => {
             const textData = contentArea.value.trim();
             if (!textData) {
-                alert('There is no content in the textarea to send.');
+                alert('文字框內沒有內容可以傳送，請先點擊解析按址。');
                 return;
             }
 
-            statusMessage.style.color = 'blue';
-            statusMessage.textContent = 'Forwarding to game...';
+            statusMessage.style.backgroundColor = '#e6f2ff';
+            statusMessage.style.color = '#004085';
+            statusMessage.textContent = '正在前往遊戲網頁...';
 
-            // Base URL of your game
+            // 遊戲目標網頁
             const targetPage = 'https://hofai2k.github.io/page/sentence_game_1.html';
 
-            // Safely encode the CSV/text data for a URL parameter
+            // 將 CSV 資料進行網址編碼 (URL Encode)
             const encodedData = encodeURIComponent(textData);
 
-            // Construct the final URL with the 'content' parameter
+            // 組合最終帶有 content 參數的 URL
             const finalUrl = `${targetPage}?content=${encodedData}`;
 
-            // Redirect the user to the game page
+            // 導向至遊戲網頁
             window.location.href = finalUrl;
         });
-
-
     </script>
 
 </body>
