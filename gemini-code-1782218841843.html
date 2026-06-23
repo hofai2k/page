@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,27 +13,33 @@
             padding: 20px;
             background-color: #f9f9f9;
         }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
         }
-        input[type="url"], textarea {
+
+        input[type="url"],
+        textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
         }
+
         textarea {
             height: 250px;
             resize: vertical;
             font-family: monospace;
             font-size: 13px;
         }
+
         button {
             padding: 10px 20px;
             background-color: #007bff;
@@ -42,22 +49,26 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .status {
             margin-top: 10px;
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
 
     <h2>URL Content Parser</h2>
 
     <div class="form-group">
         <label for="urlInput">Enter URL:</label>
-        <input type="url" id="urlInput" placeholder="Enter URL here" value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA/export?format=csv&gid=0">
+        <input type="url" id="urlInput" placeholder="Enter URL here"
+            value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA/export?format=csv&gid=0">
         <button id="parseBtn" style="margin-top: 10px;">Parse Button</button>
     </div>
 
@@ -81,11 +92,27 @@
 
         // 1. Parse Button Logic (Optimized for Google Sheets / External URLs)
         parseBtn.addEventListener('click', async () => {
-            const targetUrl = urlInput.value.trim();
+            var targetUrl = urlInput.value.trim();
+
+            if (!targetUrl.startsWith("https://docs.google.com/spreadsheets")) {
+                targetUrl = "";
+            }
+
+
+            // /export?format=csv&gid=0
             if (!targetUrl) {
                 alert('Please enter a valid URL.');
                 return;
             }
+
+            if (targetUrl.endsWith("/")) {
+                targetUrl = targetUrl.slice(0, -1);
+            }
+
+            if (!targetUrl.endsWith("/")) {
+                targetUrl += "/export?format=csv&gid=0";
+            }
+
 
             statusMessage.style.color = 'blue';
             statusMessage.textContent = 'Fetching content...';
@@ -94,12 +121,12 @@
             try {
                 // Using a reliable open-source proxy alternative to bypass Google's CORS restrictions
                 const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-                
+
                 const response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error('Network response was not ok.');
-                
+
                 const data = await response.text();
-                
+
                 if (!data || data.includes("<!DOCTYPE html>") && targetUrl.includes("format=csv")) {
                     throw new Error("Google blocked the proxy or sheet is not shared publicly.");
                 }
@@ -149,4 +176,5 @@
     </script>
 
 </body>
+
 </html>
