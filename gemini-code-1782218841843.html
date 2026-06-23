@@ -156,7 +156,7 @@
                 const formData = new URLSearchParams();
                 formData.append('content', textData);
 
-                await fetch('http://abc.com', {
+                await fetch('https://hofai2k.github.io/page/sentence_game_1.html', {
                     method: 'POST',
                     mode: 'no-cors', // standard workaround if abc.com lacks cross-origin headers
                     headers: {
@@ -166,11 +166,11 @@
                 });
 
                 statusMessage.style.color = 'green';
-                statusMessage.textContent = 'Data sent to http://abc.com!';
+                statusMessage.textContent = 'Data sent game';
             } catch (error) {
                 console.error(error);
                 statusMessage.style.color = 'orange';
-                statusMessage.textContent = 'Request sent. (Note: abc.com response could not be read due to typical browser sandbox rules)';
+                statusMessage.textContent = 'Request sent. (Note: error response could not be read due to typical browser sandbox rules)';
             }
         });
     </script>
