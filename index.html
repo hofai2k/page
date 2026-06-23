@@ -113,6 +113,8 @@
                 targetUrl = targetUrl.slice(0, -1);
             }
 
+            targetUrl = targetUrl.replace(/\/edit.*$/, "");
+
             if (!targetUrl.endsWith("/")) {
                 targetUrl += "/export?format=csv&gid=0";
             }
