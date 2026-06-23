@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheet Combo Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Select an Option from Google Sheet</h2>
+    
+    <label for="sheet-combobox">Column A Options:</label>
+    <select id="sheet-combobox">
+        <option class="loading">Loading data...</option>
+    </select>
+`
+    <script>
+        // 1. Your Public Google Sheet URL (with /export?format=csv appended)
+        // Also specifying gid=0 to ensure we target the first sheet (Sheet1)
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA/edit?usp=sharing&gid=0';
+
+        
+
+        async function populateComboBox() {
+            const comboBox = document.getElementById('sheet-combobox');
+
+            try {
+                // 2. Fetch the CSV data from the public Google Sheet
+                const response = await fetch(csvUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csvText = await response.text();
+
+                // 3. Parse CSV rows
+                // This splits by newlines to get each row
+                const rows = csvText.split(/\r?\n/);
+
+                // Clear the "Loading..." option
+                comboBox.innerHTML = '';
+
+                // Add a default placeholder option
+                const placeholder = document.createElement('option');
+                placeholder.text = "-- Select an option --";
+                placeholder.value = "";
+                comboBox.appendChild(placeholder);
+
+                // 4. Loop through rows and extract Column A (index 0)
+                rows.forEach((row, index) => {
+                    // Simple CSV splitting by comma. 
+                    // Note: If your values contain commas inside quotes, a proper CSV parser like PapaParse is recommended.
+                    const columns = row.split(',');
+                    const columnAValue = columns[0] ? columns[0].trim() : '';
+
+                    // Skip the first row if it's a header (optional)
+                    // If you want to include the first row, change index === 0 to false or remove this check
+                    if (index === 0) {
+                        // Assuming row 0 is a header (e.g., "Name", "ID"). Skip if desired.
+                        return; 
+                    }
+
+                    // Only add to combo box if the cell is not empty
+                    if (columnAValue) {
+                        const option = document.createElement('option');
+                        option.value = columnAValue;
+                        option.text = columnAValue;
+                        comboBox.appendChild(option);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching or parsing sheet data:', error);
+                comboBox.innerHTML = '<option>Error loading data</option>';
+            }
+        }
+
+        // Run the function when the page loads
+        window.addEventListener('DOMContentLoaded', populateComboBox);
+    </script>
+</body>
+</html>
