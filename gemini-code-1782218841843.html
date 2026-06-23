@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Content Parser & Sender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="url"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>URL Content Parser</h2>
+
+    <div class="form-group">
+        <label for="urlInput">Enter URL:</label>
+        <input type="url" id="urlInput" placeholder="https://example.com" value="https://example.com">
+        <button id="parseBtn" style="margin-top: 10px;">Parse Button</button>
+    </div>
+
+    <div class="form-group">
+        <label for="contentArea">URL Content:</label>
+        <textarea id="contentArea" placeholder="Parsed content will appear here..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <button id="startBtn">Start</button>
+    </div>
+
+    <div id="statusMessage" class="status"></div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const parseBtn = document.getElementById('parseBtn');
+        const contentArea = document.getElementById('contentArea');
+        const startBtn = document.getElementById('startBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // 1. Parse Button Logic (Fetch URL content)
+        parseBtn.addEventListener('click', async () => {
+            const targetUrl = urlInput.value.trim();
+            if (!targetUrl) {
+                alert('Please enter a valid URL.');
+                return;
+            }
+
+            statusMessage.style.color = 'blue';
+            statusMessage.textContent = 'Fetching content...';
+            contentArea.value = '';
+
+            try {
+                // Using a public CORS proxy (allorigins) to bypass browser security policies
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('Network response was not ok.');
+                
+                const data = await response.json();
+                
+                // allorigins returns the HTML inside the 'contents' property
+                contentArea.value = data.contents;
+                statusMessage.style.color = 'green';
+                statusMessage.textContent = 'Content parsed successfully!';
+            } catch (error) {
+                console.error(error);
+                statusMessage.style.color = 'red';
+                statusMessage.textContent = 'Failed to fetch URL. Ensure it is valid and includes http:// or https://';
+            }
+        });
+
+        // 2. Start Button Logic (POST textarea data)
+        startBtn.addEventListener('click', async () => {
+            const textData = contentArea.value;
+            if (!textData) {
+                alert('There is no content in the textarea to send.');
+                return;
+            }
+
+            statusMessage.style.color = 'blue';
+            statusMessage.textContent = 'Sending data to http://abc.com...';
+
+            try {
+                // Sending standard Form URL Encoded data (like a traditional HTML form post)
+                const formData = new URLSearchParams();
+                formData.append('content', textData);
+
+                const response = await fetch('http://abc.com', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData.toString()
+                });
+
+                // Note: If abc.com doesn't support CORS, this might throw an error in your browser console, 
+                // but the network request will still have been attempted/sent.
+                statusMessage.style.color = 'green';
+                statusMessage.textContent = 'Data sent to http://abc.com!';
+            } catch (error) {
+                console.error(error);
+                statusMessage.style.color = 'orange';
+                // Handled as sent because external domains without CORS headers often trigger errors even if the POST lands
+                statusMessage.textContent = 'Request attempted. (Note: standard browser security may block viewing the response from abc.com)';
+            }
+        });
+    </script>
+
+</body>
+</html>
