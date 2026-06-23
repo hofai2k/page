@@ -257,14 +257,22 @@
         async function loadGameLevels() {
             const urlParams = new URLSearchParams(window.location.search);
             // Default to 'set1.txt' if the '?file=' parameter is not specified
-            const targetFile = `sentence_game_1/${urlParams.get('file')}` || 'sentence_game_1/set1.txt';
+
+            //const targetFile = `sentence_game_1/${urlParams.get('file')}` || 'sentence_game_1/set1.txt';
 
             try {
+                /*
                 const response = await fetch(targetFile);
                 if (!response.ok) {
                     throw new Error(`無法載入檔案: ${response.statusText}`);
                 }
                 const textData = await response.text();
+                */
+
+                const textData = `sentence_game_1/${urlParams.get('content')}`;
+                console.log(textData);
+
+
                 levels = parseToLevels(textData);
 
                 if (levels.length > 0) {

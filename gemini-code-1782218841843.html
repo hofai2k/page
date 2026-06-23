@@ -74,7 +74,11 @@
 
     <div class="form-group">
         <label for="contentArea">URL Content:</label>
-        <textarea id="contentArea" placeholder="Parsed content will appear here..."></textarea>
+        <textarea id="contentArea" placeholder="Parsed content will appear here...">
+title:🌞 學校與學習 第一關：
+target:我們 每天 早上 一起 去上學 。
+target:每天 早上 我們 一起 去上學 。
+        </textarea>
     </div>
 
     <div class="form-group">
@@ -142,37 +146,31 @@
         });
 
         // 2. Start Button Logic (POST textarea data)
-        startBtn.addEventListener('click', async () => {
-            const textData = contentArea.value;
+        // 2. Start Button Logic (Forward data via URL query parameter)
+        startBtn.addEventListener('click', () => {
+            const textData = contentArea.value.trim();
             if (!textData) {
                 alert('There is no content in the textarea to send.');
                 return;
             }
 
             statusMessage.style.color = 'blue';
-            statusMessage.textContent = 'Sending data to http://abc.com...';
+            statusMessage.textContent = 'Forwarding to game...';
 
-            try {
-                const formData = new URLSearchParams();
-                formData.append('content', textData);
+            // Base URL of your game
+            const targetPage = 'https://hofai2k.github.io/page/sentence_game_1.html';
 
-                await fetch('https://hofai2k.github.io/page/sentence_game_1.html', {
-                    method: 'POST',
-                    mode: 'no-cors', // standard workaround if abc.com lacks cross-origin headers
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formData.toString()
-                });
+            // Safely encode the CSV/text data for a URL parameter
+            const encodedData = encodeURIComponent(textData);
 
-                statusMessage.style.color = 'green';
-                statusMessage.textContent = 'Data sent game';
-            } catch (error) {
-                console.error(error);
-                statusMessage.style.color = 'orange';
-                statusMessage.textContent = 'Request sent. (Note: error response could not be read due to typical browser sandbox rules)';
-            }
+            // Construct the final URL with the 'content' parameter
+            const finalUrl = `${targetPage}?content=${encodedData}`;
+
+            // Redirect the user to the game page
+            window.location.href = finalUrl;
         });
+
+
     </script>
 
 </body>
