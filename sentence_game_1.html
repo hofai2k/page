@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1280, initial-scale=1.0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+
     <title>句子遊戲 (雙人對戰)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -228,7 +232,7 @@
 
                         let tmp = value.split(/\s+/).join(' ');
                         value = tmp;
-                        
+
                         levelObj.words = value.split(' ').sort(() => Math.random() - 0.5);
                         levelObj.targets.push(value);
                     }
