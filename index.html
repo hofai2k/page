@@ -58,11 +58,24 @@
             font-size: 15px;
         }
 
-        /* 可輸入與選擇的 Combobox 容器設計 */
-        .combo-container {
-            position: relative;
+        /* Radio Options Styling */
+        .radio-group {
+            margin-bottom: 12px;
             display: flex;
-            width: 100%;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .radio-label input {
+            margin-right: 8px;
         }
 
         .combo-input {
@@ -72,6 +85,7 @@
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 14px;
+            background-color: #ffffff;
         }
 
         textarea {
@@ -90,7 +104,7 @@
         .btn-block {
             display: flex;
             gap: 12px;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         button {
@@ -113,7 +127,6 @@
             background-color: var(--primary-hover);
         }
 
-        /* 新增的清除按鈕樣式 */
         #clearBtn {
             background-color: var(--error-color);
         }
@@ -141,8 +154,7 @@
             border-radius: 4px;
             transition: all 0.2s ease;
         }
-        
-        /* 當狀態欄有字時才加內襯距 */
+
         .status:not(:empty) {
             padding: 10px;
         }
@@ -155,19 +167,32 @@
         <h2>句子遊戲 (雙人對戰)</h2>
 
         <div class="form-group">
-            <label for="urlInput">請選擇或輸入試算表網址：</label>
-            <a href="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA" target="_blank">自定問題格式</a>
-            <div class="combo-container">
-                <input type="url" id="urlInput" class="combo-input" placeholder="請選擇下方選項或貼上 Google 試算表網址"
-                    list="urlOptions"
-                    value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">
-                <datalist id="urlOptions">
-                    <option value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">
-                        測試用問題</option>
-                    <option value="https://docs.google.com/spreadsheets/d/1zA8KnNU28k84sCT2Pk7PqJHMEoGjj9SktVLTG_fbllI">
-                        問題1</option>
-                </datalist>
+            <label>請選擇試算表來源：</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="urlSource"
+                        value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA"
+                        checked>
+                    測試用問題
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="urlSource"
+                        value="https://docs.google.com/spreadsheets/d/1zA8KnNU28k84sCT2Pk7PqJHMEoGjj9SktVLTG_fbllI">
+                    問題1
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="urlSource" value="custom">
+                    自訂網址
+                </label>
             </div>
+
+
+            <a href="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA"
+                target="_blank" style="display: inline-block; margin-bottom: 8px;">自定問題格式</a>
+            <label for="urlInput">試算表網址：</label>
+            <input type="url" id="urlInput" class="combo-input" placeholder="請選擇上方選項或在此貼上 Google 試算表網址"
+                value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">
+
             <div class="btn-block">
                 <button id="parseBtn">解析網址內容</button>
                 <button id="clearBtn">清除全部</button>
@@ -176,7 +201,7 @@
 
         <div class="form-group">
             <label for="contentArea">題目內容：</label>
-            <textarea id="contentArea" placeholder="解析後的內容將會顯示在這裡..."></textarea>
+            <textarea id="contentArea" placeholder="解析後的內容將會顯示在這裡..." readonly></textarea>
         </div>
 
         <div class="form-group">
@@ -189,10 +214,23 @@
     <script>
         const urlInput = document.getElementById('urlInput');
         const parseBtn = document.getElementById('parseBtn');
-        const clearBtn = document.getElementById('clearBtn'); // 新增
+        const clearBtn = document.getElementById('clearBtn');
         const contentArea = document.getElementById('contentArea');
         const startBtn = document.getElementById('startBtn');
         const statusMessage = document.getElementById('statusMessage');
+        const radioButtons = document.querySelectorAll('input[name="urlSource"]');
+
+        // Radio button change logic
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'custom') {
+                    urlInput.value = '';
+                    urlInput.focus();
+                } else {
+                    urlInput.value = e.target.value;
+                }
+            });
+        });
 
         // 1. 解析按鈕邏輯
         parseBtn.addEventListener('click', async () => {
@@ -251,15 +289,19 @@
             }
         });
 
-        // 新增：2. 清除全部按鈕邏輯
+        // 2. 清除全部按鈕邏輯
         clearBtn.addEventListener('click', () => {
             urlInput.value = '';        // 清空網址輸入框
             contentArea.value = '';     // 清空文字區域
             statusMessage.textContent = ''; // 清空狀態訊息
             statusMessage.style.backgroundColor = 'transparent'; // 重置狀態欄背景
+
+            // 重置單選按鈕回到第一個選項
+            radioButtons[0].checked = true;
+            urlInput.value = radioButtons[0].value;
         });
 
-        // 3. 開始按鈕邏輯 (將資料轉發至遊戲網頁)
+        // 3. 開始按鈕邏輯
         startBtn.addEventListener('click', () => {
             const textData = contentArea.value.trim();
             if (!textData) {
@@ -271,16 +313,10 @@
             statusMessage.style.color = '#004085';
             statusMessage.textContent = '正在前往遊戲網頁...';
 
-            // 遊戲目標網頁
             const targetPage = 'https://hofai2k.github.io/page/sentence_game_1.html';
-
-            // 將 CSV 資料進行網址編碼 (URL Encode)
             const encodedData = encodeURIComponent(textData);
-
-            // 組合最終帶有 content 參數的 URL
             const finalUrl = `${targetPage}?content=${encodedData}`;
 
-            // 導向至遊戲網頁
             window.location.href = finalUrl;
         });
     </script>
