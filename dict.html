@@ -8,13 +8,11 @@
     <style>
         @font-face {
             font-family: 'b8AR4';
-            /* This is the name you will use to reference it */
             src: url('fonts/kaiu.woff2') format('woff2'),
                 url('fonts/kaiu.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
-
 
         :root {
             --bg-app: #f1f5f9;
@@ -23,7 +21,6 @@
             --text-muted: #64748b;
             --border-color: #f1f5f9;
 
-            /* Action Colors */
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --success: #10b981;
@@ -35,7 +32,6 @@
             --accent: #0ea5e9;
             --accent-hover: #0284c7;
 
-            /* Feedback States */
             --playing-border: #6366f1;
             --playing-bg: #f8fafc;
             --selected-border: #a855f7;
@@ -59,12 +55,10 @@
             transition: background-color 0.3s ease;
         }
 
-        /* Forces inputs, textareas, selections, and buttons to use the custom font globally */
         input, textarea, button, select, option {
             font-family: 'b8AR4', sans-serif !important;
         }
 
-        /* 專注/劇場模式背景 */
         body.focus-mode-active {
             background-color: #0f172a;
             overflow: hidden;
@@ -90,7 +84,6 @@
             letter-spacing: -0.025em;
         }
 
-        /* 頂部整合型工具列 */
         .controls-header.unified-toolbar {
             display: flex;
             flex-direction: column;
@@ -104,7 +97,6 @@
             width: 100%;
         }
 
-        /* 頁籤控制組面板 */
         .toolbar-row {
             display: flex;
             flex-wrap: wrap;
@@ -139,7 +131,6 @@
             background: rgba(255, 255, 255, 0.5);
         }
 
-        /* 模擬主動控制按鈕外觀 */
         .tab-panel-btn.btn-add-text {
             color: white;
             background-color: var(--success);
@@ -147,6 +138,16 @@
 
         .tab-panel-btn.btn-add-text:hover {
             background-color: var(--success-hover);
+        }
+
+        /* 批量新增按鈕樣式 */
+        .tab-panel-btn.btn-batch-text {
+            color: white;
+            background-color: #059669;
+        }
+
+        .tab-panel-btn.btn-batch-text:hover {
+            background-color: #047857;
         }
 
         .tab-panel-btn.btn-add-wait {
@@ -181,7 +182,6 @@
             gap: 8px;
         }
 
-        /* 屬性設定面板 */
         .global-settings-panel {
             display: flex;
             flex-wrap: wrap;
@@ -223,7 +223,6 @@
             background: white;
         }
 
-        /* 通用按鈕樣式 */
         button {
             padding: 8px 14px;
             cursor: pointer;
@@ -260,7 +259,6 @@
             background-color: var(--danger-hover);
         }
 
-        /* 卡片網格 */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -268,7 +266,6 @@
             width: 100%;
         }
 
-        /* 卡片樣式 */
         .record-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -322,7 +319,6 @@
             font-size: 1.1rem;
         }
 
-        /* 卡片主體 */
         .card-body {
             padding: 16px;
             display: flex;
@@ -332,7 +328,6 @@
             align-items: stretch;
         }
 
-        /* 單一圖片插槽 */
         .image-container {
             width: 110px;
             flex-shrink: 0;
@@ -438,7 +433,6 @@
             opacity: 1;
         }
 
-        /* 文字輸入區塊 */
         .input-wrapper {
             display: flex;
             flex: 1;
@@ -490,7 +484,6 @@
             background-color: #f1f5f9;
         }
 
-        /* 卡片底部操作鍵 */
         .card-actions {
             display: flex;
             gap: 8px;
@@ -570,7 +563,6 @@
             background-color: #fee2e2;
         }
 
-        /* 等待卡片專屬內層樣式 */
         .wait-card-content {
             display: flex;
             flex-direction: column;
@@ -663,7 +655,6 @@
             transform: scale(1.05);
         }
 
-        /* 劇場模式下的卡片排版 */
         body.focus-mode-active .record-card.playing-now {
             width: 100%;
             height: 100%;
@@ -770,6 +761,117 @@
             border-width: 4px;
         }
 
+        /* 彈出對話框 (Modal) 樣式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10005;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-window {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-window {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-body p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            resize: vertical;
+            outline: none;
+        }
+
+        .modal-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-btn-cancel {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #cbd5e1;
+        }
+
+        .modal-btn-confirm {
+            background: var(--success);
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: var(--success-hover);
+        }
+
         @media (max-width: 900px) {
             body.focus-mode-active .record-card.playing-now .card-body {
                 flex-direction: column;
@@ -802,6 +904,23 @@
 
 <body>
 
+    <div class="modal-overlay" id="batchModal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3>🗂️ 批量新增文字卡片</h3>
+                <button type="button" class="delete-btn" id="batchModalClose" style="font-size:1.1rem">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>請在下方輸入文字，系統會根據【換行（每一行）】自動切割並建立獨立的卡片：</p>
+                <textarea class="modal-textarea" id="batchInput" placeholder="第一行內容&#10;第二行內容&#10;第三行內容..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn-cancel" id="batchCancelBtn">取消</button>
+                <button type="button" class="modal-btn-confirm" id="batchConfirmBtn">➕ 確認新增</button>
+            </div>
+        </div>
+    </div>
+
     <div class="focus-overlay" id="focusOverlay">
         <div class="focus-card-slot" id="focusCardSlot"></div>
         <div class="focus-controls">
@@ -817,6 +936,7 @@
             <div class="toolbar-row">
                 <div class="tab-panel-group">
                     <button type="button" class="tab-panel-btn btn-add-text" id="addFieldsBtn">📝 新增文字卡片</button>
+                    <button type="button" class="tab-panel-btn btn-batch-text" id="openBatchBtn">🗂️ 批量多行新增</button>
                     <button type="button" class="tab-panel-btn btn-add-wait" id="addWait5Btn">⏳ 等待卡 (5秒)</button>
                     <button type="button" class="tab-panel-btn btn-add-wait" id="addWait10Btn">⏳ 等待卡 (10秒)</button>
                 </div>
@@ -829,9 +949,7 @@
 
             <div class="toolbar-row">
                 <div class="tab-panel-group" style="width: 100%; justify-content: flex-start; background: #e2e8f0;">
-                    <span
-                        style="font-size: 0.8rem; font-weight: 800; color: #475569; padding: 8px 4px 8px 10px; display: inline-flex; align-items: center;">🛠️
-                        工具箱:</span>
+                    <span style="font-size: 0.8rem; font-weight: 800; color: #475569; padding: 8px 4px 8px 10px; display: inline-flex; align-items: center;">🛠️ 工具箱:</span>
                     <button type="button" class="tab-panel-btn btn-utility" id="showAllBtn">👁️ 顯示全部文字</button>
                     <button type="button" class="tab-panel-btn btn-utility" id="hideAllBtn">🔒 隱藏全部文字</button>
                     <button type="button" class="tab-panel-btn btn-accent" id="exportBtn">📥 匯出備份</button>
@@ -877,6 +995,14 @@
         const stopAllBtn = document.getElementById('stopAllBtn');
         const showAllBtn = document.getElementById('showAllBtn');
         const hideAllBtn = document.getElementById('hideAllBtn');
+
+        // 批量 Modal 相關元件
+        const openBatchBtn = document.getElementById('openBatchBtn');
+        const batchModal = document.getElementById('batchModal');
+        const batchModalClose = document.getElementById('batchModalClose');
+        const batchCancelBtn = document.getElementById('batchCancelBtn');
+        const batchConfirmBtn = document.getElementById('batchConfirmBtn');
+        const batchInput = document.getElementById('batchInput');
 
         const globalLoopsInput = document.getElementById('globalLoops');
         const globalWaitInput = document.getElementById('globalWait');
@@ -925,6 +1051,40 @@
         globalSpeedInput.addEventListener('input', (e) => speedValue.innerText = parseFloat(e.target.value).toFixed(1));
 
         initDragAndDrop();
+
+        // 批量 Modal 顯示與隱藏邏輯
+        const toggleBatchModal = (show) => {
+            if (show) {
+                batchInput.value = "";
+                batchModal.classList.add('active');
+                batchInput.focus();
+            } else {
+                batchModal.classList.remove('active');
+            }
+        };
+
+        openBatchBtn.addEventListener('click', () => toggleBatchModal(true));
+        batchModalClose.addEventListener('click', () => toggleBatchModal(false));
+        batchCancelBtn.addEventListener('click', () => toggleBatchModal(false));
+
+        batchConfirmBtn.addEventListener('click', () => {
+            const lines = batchInput.value.split('\n');
+            let addedCount = 0;
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed.length > 0) {
+                    createRow(trimmed);
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                toggleBatchModal(false);
+            } else {
+                alert("請輸入至少一行文字內容！");
+            }
+        });
 
         function loadSystemVoices() {
             if (typeof speechSynthesis === 'undefined') return;
