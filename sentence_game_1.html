@@ -225,7 +225,7 @@
                     if (key === 'title') {
                         levelObj.title = value.replace(/"$/, '');
                     } else if (key === 'target') {
-                        value = ' '.join(text.split());
+                        //value = ' '.join(text.split());
                         levelObj.words = value.split(' ').sort(() => Math.random() - 0.5);
                         levelObj.targets.push(value);
                     }
