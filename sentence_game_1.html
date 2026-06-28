@@ -246,9 +246,11 @@
         }
 
         async function loadGameLevels() {
-            const urlParams = new URLSearchParams(window.location.search);
+            //const urlParams = new URLSearchParams(window.location.search);
             try {
-                const textData = `sentence_game_1/${urlParams.get('content')}`;
+                //const textData = `sentence_game_1/${urlParams.get('content')}`;
+
+                const textData =localStorage.getItem('textData');
                 console.log(textData);
 
                 levels = parseToLevels(textData);

@@ -315,7 +315,9 @@
 
             const targetPage = 'https://hofai2k.github.io/page/sentence_game_1.html';
             const encodedData = encodeURIComponent(textData);
-            const finalUrl = `${targetPage}?content=${encodedData}`;
+            localStorage.setItem('textData', textData);
+            //const finalUrl = `${targetPage}?content=${encodedData}`;
+            const finalUrl = `${targetPage}
 
             window.location.href = finalUrl;
         });
