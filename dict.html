@@ -45,7 +45,7 @@
         }
 
         body {
-            font-family: 'b8AR4', sans-serif;
+    
             background-color: var(--bg-app);
             color: var(--text-main);
             padding: 40px 20px;
@@ -55,9 +55,17 @@
             transition: background-color 0.3s ease;
         }
 
-        input, textarea, button, select, option {
+
+        textarea {
             font-family: 'b8AR4', sans-serif !important;
         }
+
+        /*
+        input, button, select, option {
+           
+        }*/
+
+
 
         body.focus-mode-active {
             background-color: #0f172a;
@@ -941,14 +949,17 @@
                     <button type="button" class="tab-panel-btn btn-add-wait" id="addWait10Btn">⏳ 等待卡 (10秒)</button>
                 </div>
 
-                <div class="action-playback-group">
-                    <button type="button" class="play-all-btn" id="playAllBtn">▶️ 播放全部</button>
-                    <button type="button" class="stop-all-btn" id="stopAllBtn">🛑 停止</button>
-                </div>
             </div>
 
             <div class="toolbar-row">
                 <div class="tab-panel-group" style="width: 100%; justify-content: flex-start; background: #e2e8f0;">
+
+
+                    <button type="button" class="play-all-btn" id="playAllBtn">▶️ 播放全部</button>
+                    <button type="button" class="stop-all-btn" id="stopAllBtn">🛑 停止</button>
+           
+
+
                     <span style="font-size: 0.8rem; font-weight: 800; color: #475569; padding: 8px 4px 8px 10px; display: inline-flex; align-items: center;">🛠️ 工具箱:</span>
                     <button type="button" class="tab-panel-btn btn-utility" id="showAllBtn">👁️ 顯示全部文字</button>
                     <button type="button" class="tab-panel-btn btn-utility" id="hideAllBtn">🔒 隱藏全部文字</button>
