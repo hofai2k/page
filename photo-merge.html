@@ -300,10 +300,18 @@
             border: 1px dashed #cbd5e1;
             cursor: default;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            touch-action: none; /* Prevents iOS scrolling while dragging on canvas */
         }
 
+        /* Fixed: Visually hide the file input instead of display:none for iOS compatibility */
         #file-input {
-            display: none;
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+            width: 1px;
+            height: 1px;
+            top: -100px;
+            left: -100px;
         }
 
         /* --- Responsive iPhone / Mobile Layout Modifications --- */
@@ -445,7 +453,6 @@
         let shapeCounter = 0;
         let selectedShapeForUpload = null;
 
-        // Border options permanently locked to true
         const isBorderEnabled = true;
         let currentBorderColor = '#d3d3d3';
         let currentBorderWidthSetting = '10';
@@ -535,7 +542,6 @@
                     ctx.fillText(`${shape.labelName}`, shape.x + shape.w / 2, shape.y + shape.h / 2 + 25);
                 }
 
-                // Render dynamic stroke configurations directly
                 if (isBorderEnabled) {
                     ctx.lineWidth = parseInt(currentBorderWidthSetting, 10);
                     ctx.strokeStyle = currentBorderColor;
@@ -649,12 +655,11 @@
 
         function getCanvasPointerCoords(e) {
             const rect = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const touch = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
 
             return {
-                x: (clientX - rect.left) * (canvas.width / rect.width),
-                y: (clientY - rect.top) * (canvas.height / rect.height)
+                x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+                y: (touch.clientY - rect.top) * (canvas.height / rect.height)
             };
         }
 
@@ -713,6 +718,8 @@
 
             if (!clickPreventedByDrag && draggedShape) {
                 selectedShapeForUpload = draggedShape;
+                
+                // Directly trigger native click synchronously for iOS Safari gesture context
                 fileInput.click();
             }
 
@@ -721,13 +728,23 @@
             canvas.style.cursor = 'default';
         }
 
+        // Standardized Mouse Events
         canvas.addEventListener('mousedown', handlePointerDown);
         window.addEventListener('mousemove', handlePointerMove);
         window.addEventListener('mouseup', handlePointerUp);
 
-        canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
-        window.addEventListener('touchmove', handlePointerMove, { passive: false });
-        window.addEventListener('touchend', handlePointerUp);
+        // Standardized Touch Events with event cancellation to avoid dual invocation
+        canvas.addEventListener('touchstart', (e) => {
+            handlePointerDown(e);
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            handlePointerMove(e);
+        }, { passive: false });
+
+        window.addEventListener('touchend', (e) => {
+            handlePointerUp(e);
+        });
 
         document.getElementById('btn-preset-6in4r').addEventListener('click', () => generatePresetLayout('btn-preset-6in4r', 750, 1000, 3, 2, 3000, 2000));
         document.getElementById('btn-preset-9in4r').addEventListener('click', () => generatePresetLayout('btn-preset-9in4r', 500, 750, 3, 3, 2000, 3000));
@@ -749,7 +766,6 @@
             });
         });
 
-        // Input listener handles slider interaction in real time
         borderRange.addEventListener('input', (e) => {
             currentBorderWidthSetting = e.target.value;
             widthDisplay.textContent = `${currentBorderWidthSetting}px`;
@@ -760,7 +776,7 @@
             drawCanvas(true);
             const link = document.createElement('a');
             link.download = 'canvas-export.jpg';
-            link.href = canvas.toDataURL ? canvas.toDataURL('image/jpeg', 0.95) : canvas.toDataURL('image/jpeg', 0.95);
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
             link.click();
             drawCanvas(false);
             toggleMobileMenu(false);
