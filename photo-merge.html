@@ -19,6 +19,7 @@
         .layout-container {
             display: flex;
             height: 100vh;
+            height: 100dvh;
             padding: 20px;
             box-sizing: border-box;
             gap: 20px;
@@ -303,13 +304,21 @@
             touch-action: none; /* Prevents iOS scrolling while dragging on canvas */
         }
 
-        /* Fixed: Use display:none for clean iOS compatibility */
+        /* iOS Safe Visually Hidden Input */
         #file-input {
-            display: none;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
         }
 
-        /* --- Responsive iPhone / Mobile Layout Modifications --- */
-        @media (max-width: 768px) {
+        /* --- Responsive iPad / Mobile Layout Modifications --- */
+        @media (max-width: 1024px) {
             .mobile-header {
                 display: flex;
             }
@@ -317,6 +326,7 @@
             .layout-container {
                 flex-direction: column;
                 height: 100vh;
+                height: 100dvh;
                 padding: 70px 10px 10px 10px;
             }
 
@@ -327,6 +337,7 @@
                 left: 0;
                 bottom: 0;
                 height: 100vh;
+                height: 100dvh;
                 width: 270px;
                 border-radius: 0 16px 16px 0;
                 transform: translateX(-100%);
@@ -456,6 +467,8 @@
         let dragStartX = 0;
         let dragStartY = 0;
         let clickPreventedByDrag = false;
+        let startClientX = 0;
+        let startClientY = 0;
 
         const deleteBtnRadius = 24;
 
@@ -633,18 +646,15 @@
             const file = e.target.files[0];
             if (!file || !selectedShapeForUpload) return;
 
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const img = new Image();
-                img.onload = function () {
-                    selectedShapeForUpload.img = img;
-                    selectedShapeForUpload = null;
-                    fileInput.value = '';
-                    drawCanvas();
-                };
-                img.src = event.target.result;
+            const img = new Image();
+            img.onload = function () {
+                selectedShapeForUpload.img = img;
+                selectedShapeForUpload = null;
+                fileInput.value = '';
+                URL.revokeObjectURL(this.src); 
+                drawCanvas();
             };
-            reader.readAsDataURL(file);
+            img.src = URL.createObjectURL(file);
         });
 
         function getCanvasPointerCoords(e) {
@@ -659,6 +669,10 @@
 
         function handlePointerDown(e) {
             const coords = getCanvasPointerCoords(e);
+            const touch = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+            
+            startClientX = touch.clientX;
+            startClientY = touch.clientY;
             clickPreventedByDrag = false;
 
             for (let i = shapes.length - 1; i >= 0; i--) {
@@ -694,12 +708,16 @@
             if (!isDragging || !draggedShape) return;
 
             const coords = getCanvasPointerCoords(e);
-            const newX = coords.x - dragStartX;
-            const newY = coords.y - dragStartY;
+            const touch = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
 
-            if (Math.abs(newX - draggedShape.x) > 3 || Math.abs(newY - draggedShape.y) > 3) {
+            const moveDist = Math.hypot(touch.clientX - startClientX, touch.clientY - startClientY);
+
+            if (moveDist > 10) {
                 clickPreventedByDrag = true;
             }
+
+            const newX = coords.x - dragStartX;
+            const newY = coords.y - dragStartY;
 
             draggedShape.x = newX;
             draggedShape.y = newY;
