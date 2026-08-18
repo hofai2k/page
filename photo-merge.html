@@ -482,8 +482,17 @@
             }
         }
 
-        openMenuBtn.addEventListener('click', () => toggleMobileMenu(true));
-        closeMenuBtn.addEventListener('click', () => toggleMobileMenu(false));
+        // Use pointer/click events cleanly for UI elements
+        openMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMobileMenu(true);
+        });
+        
+        closeMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMobileMenu(false);
+        });
+        
         backdrop.addEventListener('click', () => toggleMobileMenu(false));
 
         function drawCanvas(isExporting = false) {
@@ -729,8 +738,6 @@
 
             if (!clickPreventedByDrag && draggedShape) {
                 selectedShapeForUpload = draggedShape;
-                
-                // Directly trigger native input inside direct gesture execution frame
                 fileInput.click();
             }
 
@@ -739,24 +746,22 @@
             canvas.style.cursor = 'default';
         }
 
-        // Dedicated Touch & Mouse Separation
         let isTouchDevice = false;
 
+        // Scope touch listeners directly to the canvas element rather than global window listeners
         canvas.addEventListener('touchstart', (e) => {
             isTouchDevice = true;
             handlePointerDown(e);
         }, { passive: false });
 
-        window.addEventListener('touchmove', (e) => {
+        canvas.addEventListener('touchmove', (e) => {
             if (isDragging && e.cancelable) {
                 e.preventDefault();
             }
             handlePointerMove(e);
         }, { passive: false });
 
-        window.addEventListener('touchend', (e) => {
-            // FIX: Only call preventDefault if we are actively dragging a shape.
-            // This allows native button clicks (like the hamburger menu) to function normally.
+        canvas.addEventListener('touchend', (e) => {
             if (isDragging && e.cancelable) {
                 e.preventDefault();
             }
