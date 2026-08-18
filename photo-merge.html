@@ -739,7 +739,7 @@
             canvas.style.cursor = 'default';
         }
 
-        // Dedicated Touch & Mouse Separation (Fixes iOS double-trigger issue)
+        // Dedicated Touch & Mouse Separation
         let isTouchDevice = false;
 
         canvas.addEventListener('touchstart', (e) => {
@@ -748,12 +748,18 @@
         }, { passive: false });
 
         window.addEventListener('touchmove', (e) => {
-            if (isDragging && e.cancelable) e.preventDefault();
+            if (isDragging && e.cancelable) {
+                e.preventDefault();
+            }
             handlePointerMove(e);
         }, { passive: false });
 
         window.addEventListener('touchend', (e) => {
-            if (e.cancelable) e.preventDefault();
+            // FIX: Only call preventDefault if we are actively dragging a shape.
+            // This allows native button clicks (like the hamburger menu) to function normally.
+            if (isDragging && e.cancelable) {
+                e.preventDefault();
+            }
             handlePointerUp(e);
         });
 
