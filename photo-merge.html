@@ -303,15 +303,9 @@
             touch-action: none; /* Prevents iOS scrolling while dragging on canvas */
         }
 
-        /* Fixed: Visually hide the file input instead of display:none for iOS compatibility */
+        /* Fixed: Use display:none for clean iOS compatibility */
         #file-input {
-            opacity: 0;
-            position: absolute;
-            pointer-events: none;
-            width: 1px;
-            height: 1px;
-            top: -100px;
-            left: -100px;
+            display: none;
         }
 
         /* --- Responsive iPhone / Mobile Layout Modifications --- */
@@ -698,7 +692,6 @@
 
         function handlePointerMove(e) {
             if (!isDragging || !draggedShape) return;
-            if (e.cancelable) e.preventDefault();
 
             const coords = getCanvasPointerCoords(e);
             const newX = coords.x - dragStartX;
@@ -719,7 +712,7 @@
             if (!clickPreventedByDrag && draggedShape) {
                 selectedShapeForUpload = draggedShape;
                 
-                // Directly trigger native click synchronously for iOS Safari gesture context
+                // Directly trigger native input inside direct gesture execution frame
                 fileInput.click();
             }
 
@@ -728,21 +721,36 @@
             canvas.style.cursor = 'default';
         }
 
-        // Standardized Mouse Events
-        canvas.addEventListener('mousedown', handlePointerDown);
-        window.addEventListener('mousemove', handlePointerMove);
-        window.addEventListener('mouseup', handlePointerUp);
+        // Dedicated Touch & Mouse Separation (Fixes iOS double-trigger issue)
+        let isTouchDevice = false;
 
-        // Standardized Touch Events with event cancellation to avoid dual invocation
         canvas.addEventListener('touchstart', (e) => {
+            isTouchDevice = true;
             handlePointerDown(e);
         }, { passive: false });
 
         window.addEventListener('touchmove', (e) => {
+            if (isDragging && e.cancelable) e.preventDefault();
             handlePointerMove(e);
         }, { passive: false });
 
         window.addEventListener('touchend', (e) => {
+            if (e.cancelable) e.preventDefault();
+            handlePointerUp(e);
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (isTouchDevice) return;
+            handlePointerDown(e);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isTouchDevice) return;
+            handlePointerMove(e);
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (isTouchDevice) return;
             handlePointerUp(e);
         });
 
