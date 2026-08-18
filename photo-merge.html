@@ -301,7 +301,8 @@
             border: 1px dashed #cbd5e1;
             cursor: default;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            touch-action: none; /* Prevents iOS scrolling while dragging on canvas */
+            touch-action: none;
+            /* Prevents iOS scrolling while dragging on canvas */
         }
 
         /* iOS Safe Visually Hidden Input */
@@ -450,7 +451,7 @@
         const backdrop = document.getElementById('menu-backdrop');
         const openMenuBtn = document.getElementById('btn-open-menu');
         const closeMenuBtn = document.getElementById('btn-close-sidebar');
-        
+
         const borderRange = document.getElementById('border-range');
         const widthDisplay = document.getElementById('width-display');
 
@@ -487,12 +488,12 @@
             e.stopPropagation();
             toggleMobileMenu(true);
         });
-        
+
         closeMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleMobileMenu(false);
         });
-        
+
         backdrop.addEventListener('click', () => toggleMobileMenu(false));
 
         function drawCanvas(isExporting = false) {
@@ -660,7 +661,7 @@
                 selectedShapeForUpload.img = img;
                 selectedShapeForUpload = null;
                 fileInput.value = '';
-                URL.revokeObjectURL(this.src); 
+                URL.revokeObjectURL(this.src);
                 drawCanvas();
             };
             img.src = URL.createObjectURL(file);
@@ -679,7 +680,7 @@
         function handlePointerDown(e) {
             const coords = getCanvasPointerCoords(e);
             const touch = e.touches ? e.touches[0] : (e.changedTouches ? e.changedTouches[0] : e);
-            
+
             startClientX = touch.clientX;
             startClientY = touch.clientY;
             clickPreventedByDrag = false;
@@ -811,12 +812,31 @@
 
         document.getElementById('btn-download').addEventListener('click', () => {
             drawCanvas(true);
-            const link = document.createElement('a');
-            link.download = 'canvas-export.jpg';
-            link.href = canvas.toDataURL('image/jpeg', 0.95);
-            link.click();
-            drawCanvas(false);
-            toggleMobileMenu(false);
+
+            // Use toBlob instead of toDataURL to prevent iOS string-length limits
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    alert('Download failed: Could not generate image blob.');
+                    drawCanvas(false);
+                    return;
+                }
+
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = 'canvas-export.jpg';
+                link.href = url;
+
+                // Append to body temporarily for iOS compatibility
+                document.body.appendChild(link);
+                link.click();
+
+                // Clean up
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+                drawCanvas(false);
+                toggleMobileMenu(false);
+            }, 'image/jpeg', 0.95);
         });
 
         setCanvasSize(3000, 2000, '');
