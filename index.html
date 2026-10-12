@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>句子遊戲 (雙人對戰)</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --border-color: #cccccc;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --error-hover: #bd2130;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, "Microsoft JhengHei";
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #222;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .radio-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .radio-label input {
+            margin-right: 8px;
+        }
+
+        .combo-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #ffffff;
+        }
+
+        textarea {
+            width: 100%;
+            height: 220px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            background-color: #fafafa;
+            resize: vertical;
+        }
+
+        .btn-block {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        #parseBtn {
+            background-color: var(--primary-color);
+        }
+
+        #parseBtn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #clearBtn {
+            background-color: var(--error-color);
+        }
+
+        #clearBtn:hover {
+            background-color: var(--error-hover);
+        }
+
+        #startBtn {
+            background-color: var(--success-color);
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+        }
+
+        #startBtn:hover {
+            background-color: #218838;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .status:not(:empty) {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>句子遊戲 (雙人對戰)</h2>
+        <div class="form-group">
+            <label>請選擇試算表來源：</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="urlSource"
+                        value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA"
+                        checked>
+                    測試用問題
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="urlSource"
+                        value="https://docs.google.com/spreadsheets/d/1zA8KnNU28k84sCT2Pk7PqJHMEoGjj9SktVLTG_fbllI">
+                    問題1
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="urlSource" value="custom">
+                    自訂網址
+                </label>
+            </div>
+
+            <a href="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA"
+                target="_blank" style="display: inline-block; margin-bottom: 8px;">自定問題格式</a>
+            <label for="urlInput">試算表網址：</label>
+            <input type="url" id="urlInput" class="combo-input" placeholder="請選擇上方選項或在此貼上 Google 試算表網址"
+                value="https://docs.google.com/spreadsheets/d/10G061q_C2BRpdP_J21JjtSYmZXRlM3Lpoas_K8hMDIA">
+
+            <div class="btn-block">
+                <button id="parseBtn">解析網址內容</button>
+                <button id="clearBtn">清除全部</button>
+            </div>
+        </div>
+        <div id="statusMessage" class="status"></div>
+
+        <div class="form-group">
+            <label for="contentArea">題目內容：</label>
+            <textarea id="contentArea" placeholder="解析後的內容將會顯示在這裡..." readonly></textarea>
+        </div>
+
+        <div class="form-group">
+            <button id="startBtn">開始遊戲</button>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const parseBtn = document.getElementById('parseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const contentArea = document.getElementById('contentArea');
+        const startBtn = document.getElementById('startBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const radioButtons = document.querySelectorAll('input[name="urlSource"]');
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'custom') {
+                    urlInput.value = '';
+                    urlInput.focus();
+                } else {
+                    urlInput.value = e.target.value;
+                }
+            });
+        });
+
+        // 1. 解析按鈕邏輯 (已更換為 AllOrigins 代理避免 403 阻擋)
+        parseBtn.addEventListener('click', async () => {
+            var targetUrl = urlInput.value.trim();
+
+            if (!targetUrl.startsWith("https://docs.google.com/spreadsheets")) {
+                targetUrl = "";
+            }
+
+            if (!targetUrl) {
+                alert('請輸入或選擇有效的 Google 試算表網址。');
+                return;
+            }
+
+            targetUrl = targetUrl.replace(/\/edit.*$/, "");
+            targetUrl = targetUrl.replace(/\/+$/, "");
+            targetUrl += "/export?format=csv&gid=0";
+
+            const cacheBuster = `&_t=${Date.now()}`;
+            const uniqueTargetUrl = targetUrl + cacheBuster;
+
+            statusMessage.style.backgroundColor = '#e6f2ff';
+            statusMessage.style.color = '#004085';
+            statusMessage.textContent = '正在獲取內容，請稍候...';
+            contentArea.value = '';
+
+            try {
+                // 使用 AllOrigins 繞過 CORS
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(uniqueTargetUrl)}`;
+                const response = await fetch(proxyUrl, { cache: "no-store" });
+
+                if (!response.ok) throw new Error('網路連線回應錯誤。');
+                
+                const json = await response.json();
+                const data = json.contents;
+
+                if (!data || data.trim().startsWith("<!DOCTYPE html>")) {
+                    throw new Error("Google 封鎖了代理伺服器，或該試算表未開啟公開分享。");
+                }
+
+                contentArea.value = data;
+                statusMessage.style.backgroundColor = '#d4edda';
+                statusMessage.style.color = '#155724';
+                statusMessage.textContent = '內容解析成功！';
+            } catch (error) {
+                console.error(error);
+                statusMessage.style.backgroundColor = '#f8d7da';
+                statusMessage.style.color = '#721c24';
+                statusMessage.textContent = '獲取失敗。請確保您的 Google 試算表已設為「知道連結的任何人都可以檢視」！';
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            urlInput.value = '';
+            contentArea.value = '';
+            statusMessage.textContent = '';
+            statusMessage.style.backgroundColor = 'transparent';
+            radioButtons[0].checked = true;
+            urlInput.value = radioButtons[0].value;
+        });
+
+        startBtn.addEventListener('click', () => {
+            const textData = contentArea.value.trim();
+            if (!textData) {
+                alert('文字框內沒有內容可以傳送，請先點擊解析按址。');
+                return;
+            }
+
+            statusMessage.style.backgroundColor = '#e6f2ff';
+            statusMessage.style.color = '#004085';
+            statusMessage.textContent = '正在前往遊戲網頁...';
+
+            const targetPage = 'https://hofai2k.github.io/page/sentence_game_1.html';
+            localStorage.setItem('textData', textData);
+            window.location.href = targetPage;
+        });
+    </script>
+</body>
+</html>
